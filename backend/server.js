@@ -40,7 +40,6 @@ const historyRoutes = require('./routes/history');
 const searchRoutes = require('./routes/search');
 app.use('/history', historyRoutes);
 app.use('/search', searchRoutes);
-//test change
 
 //conntect to DB
 mongoose.connect(process.env.MONGO_URI)
