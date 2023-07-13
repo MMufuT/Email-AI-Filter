@@ -1,6 +1,6 @@
 const express = require('express');
 const historyRouter = express.Router();
-const newHistory = require('../models/searchSchema');
+const History = require('../models/searchSchema');
 
 
 // GET user's search history

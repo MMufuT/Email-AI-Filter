@@ -1,6 +1,6 @@
 const express = require('express');
 const searchRouter = express.Router();
-const newSearch = require('../models/searchSchema');
+const Search = require('../models/searchSchema');
 
 searchRouter.get('/', async (req, res) => {
     res.json({mssg: 'boom, heres your search screen'})
@@ -20,14 +20,14 @@ searchRouter.post('/', async (req, res) => {
         
         // const searchResults = await performSearch(query);
         
-        // const newSearch = await Search.create({
+        // const Search = await Search.create({
         //     query: req.body,
         //     results: searchResults,
         // });
         
         // res.status(200).json(searchResults)
 
-        const newSearchSchema = await newSearch.create({query, results})
+        const newSearchSchema = await Search.create({query, results})
         res.status(200).json(newSearchSchema);
 
     } catch (error) {

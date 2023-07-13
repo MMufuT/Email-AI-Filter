@@ -1,12 +1,16 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import magGlass from './smartfilter128.png';
 import React from 'react';
 import { useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
+
+//Pages
+//import Login from './views/Login.js';
+import Home from './views/Home.js';
 
 
 function App() {
@@ -69,29 +73,14 @@ function App() {
 
   return (
     <Router>
-    <div className="App" class="p-3 mb-2 bg-danger text-white container text-center">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* <Route path="/auth/google" element={<Login />} /> */}
+      </Routes>
       
-      <div class="mt-3">
-        <h1>Welcome to</h1>
-      </div>
+    
 
-      {/* img/filter row */}
-      <div class="container">
-        <div class="row "> 
-          <div class="col-1 mt-3">
-            <img src={magGlass} alt="logo" width="50"  />
-          </div>
-          <div class="col-10 mt-4">
-            <h1>GmailAI SmartFilter</h1>
-          </div>
-        </div>
-
-        <div class="row justify-content-center">
-          <div id="signInDiv" class="my-5 d-flex justify-content-center"></div>
-        </div>
-      </div>
-
-    </div>
+    
     </Router>
   )
 }

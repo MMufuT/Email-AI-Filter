@@ -22,5 +22,5 @@ const searchSchema = new mongoose.Schema({
 },
 {timestamps: true});
 
-module.exports = mongoose.model('searchSchema', searchSchema);
+module.exports = mongoose.model('search', searchSchema);
 
