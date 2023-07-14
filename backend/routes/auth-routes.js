@@ -1,5 +1,6 @@
 const auth_router = require('express').Router();
 const passport = require('passport');
+const scopes = require('../auth/scopes');
 
 
 //auth login
@@ -10,15 +11,15 @@ auth_router.get('/login', (req, res) => {
 //auth logout
 auth_router.get('/logout', (req, res) => {
     //handle with passport
-    res.send('logging out');
+    //res.send('logging out');
+    req.logout();
+    res.redirect('/');
 });
 
 //auth with google
 auth_router.get('/google', passport.authenticate('google', {
-    scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ]
+    scope: scopes,
+    accessType: 'offline'
 }))
 
 //callback route for google to redirect to

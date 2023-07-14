@@ -3,18 +3,21 @@ const searchRouter = express.Router();
 const Search = require('../models/searchSchema');
 const passport = require('passport');
 const authCheck = require('../auth/auth-check');
+const { google } = require('googleapis');
+const {getGmailApiClient, getLatestEmail} = require('../utils/gmail-functions');
 
-// const authCheck = (req, res, next) => {
-//     if(!req.user){
-//         // if user is not logged in
-//         res.redirect('/auth/google');
-//     } else {
-//         // if user is logged in
-//         next();
-//     }
-// };
+
+  
 
 searchRouter.get('/', authCheck, (req, res) => {
+    const gmailApi = getGmailApiClient(
+        req.user.accessToken,
+        req.user.refreshToken,
+        req.user.id
+    );
+    getLatestEmail(gmailApi);
+
+
     res.json({mssg: 'Search Screen.. username: '+req.user.username })
 });
  

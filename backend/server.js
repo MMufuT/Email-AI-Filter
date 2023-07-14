@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const express = require('express');
 const cors = require('cors')
@@ -35,13 +34,8 @@ app.use((req, res, next) => {
 
 //root route
 app.get('/', (req, res) => {
-    res.status(200).send('success');
-    
-    //Authorization
-    const authHeader = req.headers['authorization'];
-    const jwtToken = authHeader && authHeader.split(' ')[1];
+    res.status(200).send('Home Page');
 
-    console.log(jwtToken + '^AUTH TOKEN^');
 });
 
 //setting up routes
