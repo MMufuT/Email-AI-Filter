@@ -1,9 +1,21 @@
 const express = require('express');
 const searchRouter = express.Router();
 const Search = require('../models/searchSchema');
+const passport = require('passport');
+const authCheck = require('../auth/auth-check');
 
-searchRouter.get('/', async (req, res) => {
-    res.json({mssg: 'boom, heres your search screen'})
+// const authCheck = (req, res, next) => {
+//     if(!req.user){
+//         // if user is not logged in
+//         res.redirect('/auth/google');
+//     } else {
+//         // if user is logged in
+//         next();
+//     }
+// };
+
+searchRouter.get('/', authCheck, (req, res) => {
+    res.json({mssg: 'Search Screen.. username: '+req.user.username })
 });
  
 //Post a new history tab to the /history path

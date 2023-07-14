@@ -15,12 +15,17 @@ auth_router.get('/logout', (req, res) => {
 
 //auth with google
 auth_router.get('/google', passport.authenticate('google', {
-    scope: ['profile']
+    scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email'
+    ]
 }))
 
 //callback route for google to redirect to
 auth_router.get('/google/redirect', passport.authenticate('google'), (req, res) => {
-    res.send('woahh we made it')
+    // Authentication finished, user data is in request
+    //res.send(req.user);
+    res.redirect('/search/')
 })
 
 module.exports = auth_router;

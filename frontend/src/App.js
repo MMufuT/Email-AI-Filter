@@ -76,7 +76,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         {/* <Route path="/auth/google" element={<Login />} /> */}
-      </Routes>
+      </Routes> 
       
     
 

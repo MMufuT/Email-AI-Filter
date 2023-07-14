@@ -1,10 +1,11 @@
 const express = require('express');
 const historyRouter = express.Router();
 const History = require('../models/searchSchema');
+const authCheck = require('../auth/auth-check');
 
 
 // GET user's search history
-historyRouter.get('/', (req, res) => {
+historyRouter.get('/', authCheck, (req, res) => {
     res.json({mssg: 'get the users search history'})
 });
 

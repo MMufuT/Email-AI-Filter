@@ -4,14 +4,28 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const express = require('express');
 const cors = require('cors')
+const passport = require('passport');
 const passportSetup = require('./auth/passport-setup');
+const cookieSession = require('cookie-session'); 
 
 //express app
 const app = express();
 const mongoose = require('mongoose');
 
-app.use(cors());
+// setting up cross-origin resource sharing
+app.use(cors()); 
+
 app.use(express.json());
+
+// setting up cookies
+app.use(cookieSession({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.SESSION_COOKIE_KEY]
+}));
+
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 //middleware logger
 app.use((req, res, next) => {

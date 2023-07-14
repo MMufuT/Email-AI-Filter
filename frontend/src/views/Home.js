@@ -39,7 +39,7 @@ const Home = () => {
 
     <div class="d-flex justify-content-center">
         <a href="http://localhost:8000/auth/google">
-            <button type="button" className="btn btn-primary">Click Me</button>
+            <button type="button" className="btn btn-primary">Google+</button>
         </a>
     </div>
     </>
