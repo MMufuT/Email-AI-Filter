@@ -20,7 +20,7 @@ async function refreshAccessToken(refreshToken) {
       console.error('Error refreshing access token:', error);
       throw error;
     }
-  }
+}
 
 passport.serializeUser((user, done) => {
     done(null, user.id);

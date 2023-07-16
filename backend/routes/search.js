@@ -9,12 +9,21 @@ const {getGmailApiClient, getLatestEmail} = require('../utils/gmail-functions');
 
   
 
+
 searchRouter.get('/', authCheck, (req, res) => {
-    const gmailApi = getGmailApiClient(
-        req.user.accessToken,
-        req.user.refreshToken,
-        req.user.id
+    const oAuth2Client = new google.auth.OAuth2(
+        process.env.OAUTH_CLIENT_ID,
+        process.env.OAUTH_CLIENT_SECRET,
+        'http://localhost:8000/auth/google/redirect'
     );
+    oAuth2Client.setCredentials({
+        access_Token: req.user.accessToken,
+        refresh_token: req.user.refreshToken
+      });
+
+    
+    //if button is pressed
+    const gmailApi = getGmailApiClient(oAuth2Client, req.user);
     getLatestEmail(gmailApi);
 
 
