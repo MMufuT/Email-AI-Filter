@@ -42,9 +42,11 @@ app.get('/', (req, res) => {
 const historyRoutes = require('./routes/history');
 const searchRoutes = require('./routes/search');
 const authRoutes = require('./routes/auth-routes');
+const loadingMailRoutes = require('./routes/loading-mail')
 app.use('/history', historyRoutes);
 app.use('/search', searchRoutes);
 app.use('/auth', authRoutes);
+app.use('/loading-mail', loadingMailRoutes)
 
 //conntect to DB
 mongoose.connect(process.env.MONGO_URI)

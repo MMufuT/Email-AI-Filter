@@ -4,30 +4,24 @@ const Search = require('../models/searchSchema');
 const passport = require('passport');
 const authCheck = require('../auth/auth-check');
 const { google } = require('googleapis');
-const {getGmailApiClient, getLatestEmail} = require('../utils/gmail-functions');
+const {getGmailApiClient, loadMailToDB, onboardingLoadMailToDB} = require('../utils/gmail-functions');
+const getOAuthClient = require('../utils/get-oauth')
 
 
   
 
 
-searchRouter.get('/', authCheck, (req, res) => {
-    const oAuth2Client = new google.auth.OAuth2(
-        process.env.OAUTH_CLIENT_ID,
-        process.env.OAUTH_CLIENT_SECRET,
-        'http://localhost:8000/auth/google/redirect'
-    );
-    oAuth2Client.setCredentials({
-        access_Token: req.user.accessToken,
-        refresh_token: req.user.refreshToken
-      });
+searchRouter.get('/', authCheck, async(req, res) => {
+    const user = req.user
+    const oAuth2Client = await getOAuthClient(user)
 
     
     //if button is pressed
-    const gmailApi = getGmailApiClient(oAuth2Client, req.user);
-    getLatestEmail(gmailApi);
+    const gmailApi = await getGmailApiClient(oAuth2Client, user);
+    const emails = await onboardingLoadMailToDB(gmailApi)
 
 
-    res.json({mssg: 'Search Screen.. username: '+req.user.username })
+    res.json({mssg: 'Search Screen.. username: '+user.username})
 });
  
 //Post a new history tab to the /history path

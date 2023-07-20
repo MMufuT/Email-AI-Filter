@@ -6,7 +6,13 @@ const userSchema = new mongoose.Schema({
     picture: String,
     email: String,
     accessToken: String,
-    refreshToken: String
+    refreshToken: String,
+    emails: [{
+        gmailId: String,
+        sender: String,
+        subject: String,
+        body: String
+    }]
 }); 
 
 module.exports = mongoose.model('user', userSchema);
