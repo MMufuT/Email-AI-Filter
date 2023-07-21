@@ -1,9 +1,14 @@
+require('dotenv').config()
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
 const User = require('../models/userSchema');
+const createEmbedding = require('../utils/create-embedding')
 const { google } = require('googleapis');
-const { getGmailApiClient, onboardingLoadMailToDB } = require('../utils/gmail-functions');
+const { getGmailApiClient, getOnboardingMail } = require('../utils/gmail-functions');
+const { PineconeClient } = require('@pinecone-database/pinecone');
 
+
+//process.env.PINECONE_API_KEY
 // Function to refresh the access token using the refresh token
 async function refreshAccessToken(refreshToken) {
     const oAuth2Client = new google.auth.OAuth2({
@@ -69,10 +74,32 @@ passport.use(
                     refresh_token: refreshToken
                 });
 
-                
+
 
                 const gmailApi = google.gmail({ version: 'v1', auth: oAuth2Client });
-                const emails = await onboardingLoadMailToDB(gmailApi)
+                const emails = await getOnboardingMail(gmailApi)
+                const pinecone = new PineconeClient();
+                await pinecone.init({
+                    environment: "us-west1-gcp-free",
+                    apiKey: "a18283ad-b8e5-4cae-a344-943813b572e7",
+                });
+                const pineconeIndex = pinecone.Index("emails");
+
+                for (let email of emails) {
+                    input = `The following text is an email...\n\nSender: ${email.sender}\n\nSubject: ${email.subject}\n\nBody: ${email.body}`
+                    const embedding = await createEmbedding(input) //embedding is an array
+                    const pineconeResult = await pineconeIndex.upsert({
+                        upsertRequest: {
+                            vectors: [{
+                                id: email.gmailId,
+                                values: embedding,
+                                metadata: {
+                                    user: profile.emails[0].value
+                                }
+                            }]
+                        }
+                    })
+                }
 
                 User.create({
                     username: profile.displayName,
