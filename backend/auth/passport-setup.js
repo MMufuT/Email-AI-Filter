@@ -6,9 +6,19 @@ const createEmbedding = require('../utils/create-embedding')
 const { google } = require('googleapis');
 const { getGmailApiClient, getOnboardingMail } = require('../utils/gmail-functions');
 const { PineconeClient } = require('@pinecone-database/pinecone');
+const { QdrantClient } = require('@qdrant/js-client-rest');
+const { v4: uuidv4 } = require('uuid');
 
 
-//process.env.PINECONE_API_KEY
+
+const qdrant = new QdrantClient({
+    url: 'https://1a0b477c-f3bf-4cf3-9fbf-5af23740228d.us-east-1-0.aws.cloud.qdrant.io:6333',
+    apiKey: process.env.QDRANT_API_KEY,
+});
+
+
+
+
 // Function to refresh the access token using the refresh token
 async function refreshAccessToken(refreshToken) {
     const oAuth2Client = new google.auth.OAuth2({
@@ -47,6 +57,7 @@ passport.use(
     }, (accessToken, refreshToken, profile, done) => {
         // passport callback function
         console.log(profile)
+        const emailAddress = profile.emails[0].value
 
         // check if user exists in database
         User.findOne({ googleId: profile.id }).then(async (currentUser) => {
@@ -61,9 +72,9 @@ passport.use(
             } else {
                 // if user doesn't exist
 
-                //pause redis queue
+                // pause redis queue
 
-                //get last 250 gmails
+                // get last 250 gmails
                 const oAuth2Client = new google.auth.OAuth2(
                     process.env.OAUTH_CLIENT_ID,
                     process.env.OAUTH_CLIENT_SECRET,
@@ -78,26 +89,41 @@ passport.use(
 
                 const gmailApi = google.gmail({ version: 'v1', auth: oAuth2Client });
                 const emails = await getOnboardingMail(gmailApi)
-                const pinecone = new PineconeClient();
-                await pinecone.init({
-                    environment: "us-west1-gcp-free",
-                    apiKey: "a18283ad-b8e5-4cae-a344-943813b572e7",
-                });
-                const pineconeIndex = pinecone.Index("emails");
+                // un-pause redis queue b/c we're done using gmail api
+
+                qdrant.createCollection(emailAddress, {
+                    vectors: {
+                        size: 1536,
+                        distance: 'Cosine'
+                    }
+
+                })
 
                 for (let email of emails) {
                     input = `The following text is an email...\n\nSender: ${email.sender}\n\nSubject: ${email.subject}\n\nBody: ${email.body}`
                     const embedding = await createEmbedding(input) //embedding is an array
-                    const pineconeResult = await pineconeIndex.upsert({
-                        upsertRequest: {
-                            vectors: [{
-                                id: email.gmailId,
-                                values: embedding,
-                                metadata: {
-                                    user: profile.emails[0].value
-                                }
-                            }]
-                        }
+                    //     const pineconeResult = await pineconeIndex.upsert({
+                    //         upsertRequest: {
+                    //             vectors: [{
+                    //                 id: email.gmailId,
+                    //                 values: embedding,
+                    //                 metadata: {
+                    //                     user: profile.emails[0].value
+                    //                 }
+                    //             }]
+                    //         }
+                    //     })
+                    // }
+
+                    qdrant.upsert(emailAddress, {
+                        points: [{
+                            id: uuidv4(), // Universally Unique Identifier
+                            vector: embedding,
+                            payload: {
+                                sender: email.sender,
+                                gmailId: email.gmailId
+                            }
+                        }]
                     })
                 }
 
@@ -113,8 +139,8 @@ passport.use(
                     console.log('\nnew user created: ' + createdUser + '\n');
                     done(null, createdUser);
                 })
-            }
 
+            }
         })
 
 
