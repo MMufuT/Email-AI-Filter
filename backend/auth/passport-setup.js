@@ -4,7 +4,7 @@ const GoogleStrategy = require('passport-google-oauth20');
 const User = require('../models/userSchema');
 const createEmbedding = require('../utils/create-embedding')
 const { google } = require('googleapis');
-const { getGmailApiClient, getOnboardingMail } = require('../utils/gmail-functions');
+const { getGmailApiClient, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const { PineconeClient } = require('@pinecone-database/pinecone');
 const { QdrantClient } = require('@qdrant/js-client-rest');
 const { v4: uuidv4 } = require('uuid');
@@ -89,6 +89,8 @@ passport.use(
 
                 const gmailApi = google.gmail({ version: 'v1', auth: oAuth2Client });
                 const emails = await getOnboardingMail(gmailApi)
+                newToOldMailSort(emails) //emails sorted (latest -> oldest)
+                
                 // un-pause redis queue b/c we're done using gmail api
 
                 qdrant.createCollection(emailAddress, {
@@ -121,7 +123,8 @@ passport.use(
                             vector: embedding,
                             payload: {
                                 sender: email.sender,
-                                gmailId: email.gmailId
+                                gmailId: email.gmailId,
+                                sentDate: email.sentDate
                             }
                         }]
                     })
@@ -134,6 +137,7 @@ passport.use(
                     email: profile.emails[0].value,
                     accessToken: accessToken,
                     refreshToken: refreshToken,
+                    latestEmail: emails[0].sentDate,
                     emails: emails
                 }).then((createdUser) => {
                     console.log('\nnew user created: ' + createdUser + '\n');

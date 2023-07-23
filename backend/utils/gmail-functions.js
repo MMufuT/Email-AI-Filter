@@ -76,7 +76,10 @@ const getOnboardingMail = (gmail) => {
 
                 const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
 
-                const email = { sender, subject, body, gmailId };
+                
+                const sentDate = new Date(parseInt(rawEmailData.internalDate));
+
+                const email = { sender, subject, body, sentDate, gmailId };
                 resolve(email);
               }
             );
@@ -96,6 +99,16 @@ const getOnboardingMail = (gmail) => {
     );
   });
 };
+
+
+const newToOldMailSort = async(emails) => {
+  // latest -> oldest
+  await emails.sort((a, b) => new Date(b.sentDate) - new Date(a.sentDate));
+}
+
+
+
+
 
 
 const loadMailToDB = (gmail, pageToken = null, emails = []) => {
@@ -170,6 +183,7 @@ const loadMailToDB = (gmail, pageToken = null, emails = []) => {
 module.exports = {
   getGmailApiClient,
   loadMailToDB,
-  getOnboardingMail
+  getOnboardingMail,
+  newToOldMailSort
 }
 

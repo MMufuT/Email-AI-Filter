@@ -7,8 +7,10 @@ const userSchema = new mongoose.Schema({
     email: String,
     accessToken: String,
     refreshToken: String,
+    latestEmail: Date,
     emails: [{
         gmailId: String,
+        sentDate: Date,
         sender: String,
         subject: String,
         body: String
