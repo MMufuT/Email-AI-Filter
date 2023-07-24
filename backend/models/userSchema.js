@@ -4,10 +4,11 @@ const userSchema = new mongoose.Schema({
     username: String,
     googleId: String,
     picture: String,
-    email: String,
+    emailAddress: String,
     accessToken: String,
     refreshToken: String,
     latestEmail: Date,
+    isOnboarded: Boolean,
     emails: [{
         gmailId: String,
         sentDate: Date,

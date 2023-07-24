@@ -26,7 +26,17 @@ auth_router.get('/google', passport.authenticate('google', {
 auth_router.get('/google/redirect', passport.authenticate('google'), (req, res) => {
     // Authentication finished, user data is in request
     //res.send(req.user);
-    res.redirect('/search/')
+    const { isOnboarded } = req.user
+    if (!isOnboarded) {
+        console.log('started onboarding:\n\n')
+        res.redirect('http://localhost:3000/onboarding'); // Replace with your frontend URL
+    } else {
+        // If user is already onboarded, redirect to the search frontend URL
+        res.redirect('http://localhost:3000/search'); // Replace with your frontend URL
+    }
+
+
+    
 })
 
 module.exports = auth_router;

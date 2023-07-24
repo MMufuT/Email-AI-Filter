@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 //Pages
 //import Login from './views/Login.js';
 import Home from './views/Home.js';
+import Onboarding from './views/Onboarding'
 
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         {/* <Route path="/auth/google" element={<Login />} /> */}
       </Routes> 
       

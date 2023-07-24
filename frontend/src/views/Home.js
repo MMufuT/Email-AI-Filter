@@ -9,7 +9,7 @@ const Home = () => {
     return (
     
         <>
-        <div className="App" class="p-3 mb-5 bg-danger text-white container text-center">
+        <div className="homr-container" class="p-3 mb-5 bg-danger text-white container text-center">
       
       <div class="mt-3">
         <h1>Welcome to</h1>
