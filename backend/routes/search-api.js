@@ -1,10 +1,11 @@
 const express = require('express');
 const searchRouter = express.Router();
 const Search = require('../models/searchSchema');
+const User = require('../models/userSchema');
 const passport = require('passport');
 const authCheck = require('../auth/auth-check');
 const { google } = require('googleapis');
-const { getGmailApiClient, loadMailToDB, getOnboardingMail } = require('../utils/gmail-functions');
+const { getGmailApiClient, loadMailToDB, getOnboardingMail, getPostOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const getOAuthClient = require('../utils/get-oauth')
 
 
@@ -14,13 +15,32 @@ const getOAuthClient = require('../utils/get-oauth')
 
 searchRouter.get('/', authCheck, async (req, res) => {
     const user = req.user
+    userId = user.id
     const oAuth2Client = await getOAuthClient(user)
 
 
     //if button is pressed
     const gmailApi = await getGmailApiClient(oAuth2Client, user);
-    const emails = await getOnboardingMail(gmailApi)
+    let emails = await user.emails
+    let beforeDate = emails[emails.length-1].sentDate
+    beforeDate = Math.floor(beforeDate.getTime() / 1000);
+    console.log(beforeDate)
 
+    await loadMailToDB(gmailApi, beforeDate, userId)
+    const updatedUser = await User.findById(userId)
+    await newToOldMailSort(updatedUser.emails)
+    const sortedMail = updatedUser.emails
+
+
+    
+    
+    await User.findByIdAndUpdate(
+        userId,
+        {
+            latestEmail: sortedMail[0].sentDate,
+            emails: sortedMail,
+        }
+    );
 
 
     res.json({ mssg: 'Search Screen.. username: ' + user.username })

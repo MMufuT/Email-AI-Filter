@@ -17,6 +17,7 @@
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "base64-js": "^1.5.1",
+    "bottleneck": "^2.19.5",
     "bull": "^4.10.4",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
