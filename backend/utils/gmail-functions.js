@@ -27,7 +27,7 @@ const getGmailApiClient = (oAuth2Client, user) => {
   return gmail;
 }
 
-const getOnboardingMail = (gmail) => {
+const getOnboardingMail = (gmail, filter) => {
   return new Promise((resolve, reject) => {
     const emails = [];
     gmail.users.messages.list(
@@ -35,7 +35,7 @@ const getOnboardingMail = (gmail) => {
         userId: 'me',
         labelIds: ['INBOX'],
         maxResults: 250,
-        q: 'in:inbox',
+        q: filter,
         orderBy: 'internalDate desc',
         includeSpamTrash: false,
       },
@@ -282,7 +282,7 @@ const loadMailToDB = (gmail, beforeDate, userId, pageToken = null, emails = []) 
           if (nextPageToken && emails.length < 750) {
             processMessages(nextPageToken); // Fetch next page of emails
           } else {
-            console.log(`Finished fetching and adding emails for user with ID: ${userId}`);
+            console.log(`Finished fetching and adding remaining 750  emails for user with ID: ${userId}`);
           }
         }
       );

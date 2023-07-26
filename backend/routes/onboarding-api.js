@@ -16,8 +16,9 @@ const qdrant = new QdrantClient({
     apiKey: process.env.QDRANT_API_KEY,
 });
 
+onboardingRouter.use(authCheck)
 
-onboardingRouter.get('/', async (req, res) => {
+onboardingRouter.post('/loading', async (req, res) => {
     console.log(`onboarding ${req.user}`)
     if (!req.user) {
         // If req.user is not defined or empty, handle the error
@@ -25,6 +26,7 @@ onboardingRouter.get('/', async (req, res) => {
     }
     try {//onboarding logic here
         const currentUser = req.user
+        const inboxFilter = currentUser.inboxFilter
         const { isOnboarded, emailAddress } = currentUser
         if (!isOnboarded) {
             //onboarding logic
@@ -37,23 +39,24 @@ onboardingRouter.get('/', async (req, res) => {
 
 
             const gmailApi = getGmailApiClient(oAuth2Client, currentUser)
-            const emails = await getOnboardingMail(gmailApi)
+            const emails = await getOnboardingMail(gmailApi, inboxFilter)
             newToOldMailSort(emails) //emails sorted (latest -> oldest)
 
             // un-pause redis queue b/c we're done using gmail api
 
-            try{
+            try {
                 qdrant.createCollection(emailAddress, {
                     vectors: {
                         size: 1536,
                         distance: 'Cosine'
                     }
-    
+
                 })
-            } catch(error){
+            } catch (error) {
                 console.error('Error occurred during upsert:', error.message);
+                res.status(500).json({ error: 'An error occured while creating Qdrarnt Vector Database collection' })
             }
-            
+
 
             for (let email of emails) {
                 input = `The following text is an email...\n\nSender: ${email.sender}\n\nSubject: ${email.subject}\n\nBody: ${email.body}`
@@ -86,12 +89,34 @@ onboardingRouter.get('/', async (req, res) => {
         }
 
         console.log('finished onboarding')
+        res.status(200).send('Success: Onboarding Complete')
     } catch (error) {
         console.error('Error during onboarding:', error);
         res.status(500).json({ error: 'An error occurred during onboarding' });
     }
-    res.status(200).send('Success: Onboarding Complete')
+})
 
+onboardingRouter.post('/form', async (req, res) => {
+    try {
+        const { filterPreferences, gmailLinkId } = req.body
+        const currentUser = req.user
+
+        let queryString = 'in:inbox ';
+
+        for (const category in filterPreferences) {
+            if (filterPreferences[category] === false) {
+                queryString += `-category:${category} `;
+            }
+        }
+
+        await User.findByIdAndUpdate(currentUser.id, { inboxFilter: queryString, gmailLinkId: gmailLinkId });
+        console.log('User updated with filter preferences:', queryString);
+        console.log('User updated with gmail link id:', gmailLinkId);
+        res.status(200).json({ message: 'Filter preferences updated successfully' });
+    } catch (error) {
+        console.error('Error updating filter preferences or gmail link id: ', error)
+        res.status(500).json({ error: 'An error occured while updating filter preferences' })
+    }
 
 })
 

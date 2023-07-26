@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import magGlass from '../smartfilter128.png';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader'
 import axios from 'axios';
 import '../styles/onboarding.css';
 
-const Onboarding = () => {
+const OnboardingLoading = () => {
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const Onboarding = () => {
 
         // }, 10000000000000)
         console.log('use effect entered')
-        axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding`, { withCredentials: true })
+        axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
         .then(response => {
             setLoading(false);
             navigate('/search')
@@ -90,4 +90,4 @@ const Onboarding = () => {
 
 
 
-export default Onboarding;
+export default OnboardingLoading;

@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
     accessToken: String,
     refreshToken: String,
     latestEmail: Date,
+    inboxFilter: String,
+    gmailLinkId: String,
     isOnboarded: Boolean,
     emails: [{
         gmailId: String,
