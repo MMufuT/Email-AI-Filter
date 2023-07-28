@@ -26,14 +26,14 @@ onboardingRouter.post('/loading', async (req, res) => {
     }
     try {//onboarding logic here
         const currentUser = req.user
-        const inboxFilter = currentUser.inboxFilter
         const { isOnboarded, emailAddress } = currentUser
-        if (!isOnboarded) {
+        if (!isOnboarded && currentUser.inboxFilter) {
             //onboarding logic
 
             // pause redis queue
 
             // get last 250 gmails
+            const inboxFilter = currentUser.inboxFilter
             const oAuth2Client = getOAuthClient(currentUser)
 
 
@@ -54,12 +54,13 @@ onboardingRouter.post('/loading', async (req, res) => {
                 })
             } catch (error) {
                 console.error('Error occurred during upsert:', error.message);
-                res.status(500).json({ error: 'An error occured while creating Qdrarnt Vector Database collection' })
+                return res.status(500).json({ error: 'An error occured while creating Qdrarnt Vector Database collection' })
             }
 
 
             for (let email of emails) {
-                input = `The following text is an email...\n\nSender: ${email.sender}\n\nSubject: ${email.subject}\n\nBody: ${email.body}`
+                input = `The following text is an email...\n\nSender: ${email.sender}
+                \n\nSubject: ${email.subject}\n\nBody: ${email.body}`
                 const embedding = await createEmbedding(input) //embedding is an array
 
                 qdrant.upsert(emailAddress, {
@@ -84,15 +85,18 @@ onboardingRouter.post('/loading', async (req, res) => {
                     emails: emails,
                 }
             );
-            console.log('\nUser updated with onboarding data:\n')
+            console.log('\nFinished onboarding: User updated with onboarding data:\n')
+            res.status(200).send('Success: Onboarding Complete')
 
+        } else if (isOnboarded) {
+            return res.status(409).send(`Did Not Execute: User '${emailAddress}' is already onboarded`)
+        } else if (!currentUser.inboxFilter) {
+            return res.status(428).send(`Did Not Execute: User '${emailAddress} needs to fill out the onboarding form first '/onboarding/form' `)
         }
 
-        console.log('finished onboarding')
-        res.status(200).send('Success: Onboarding Complete')
     } catch (error) {
         console.error('Error during onboarding:', error);
-        res.status(500).json({ error: 'An error occurred during onboarding' });
+        return res.status(500).json({ error: 'An error occurred during onboarding' });
     }
 })
 
@@ -119,6 +123,14 @@ onboardingRouter.post('/form', async (req, res) => {
     }
 
 })
+
+onboardingRouter.get('/onboarded-status', (req, res) => {
+    if (req.user.isOnboarded) {
+        res.status(200).json({ onboarded: true });
+    } else {
+        res.status(200).json({ onboarded: false });
+    }
+});
 
 
 

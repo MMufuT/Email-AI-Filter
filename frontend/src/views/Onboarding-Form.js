@@ -42,11 +42,10 @@ const OnboardingForm = () => {
         // The finishedForm object will contain the formData
         const finishedForm = formData;
         console.log(finishedForm);
-        // Now you can do whatever you want with the finishedForm object (e.g., send it to the server using axios)
         axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/form`, finishedForm, { withCredentials: true })
             .then((response) => {
-                console.log('Form details have be successfully uploaded to database')
-                navigate('/onboarding/loading'); // Assuming you have imported navigate from 'react-router-dom'
+                console.log('Form details have been successfully uploaded to database')
+                navigate('/onboarding/loading');
             })
             .catch((error) => {
                 console.log(error);
@@ -54,11 +53,36 @@ const OnboardingForm = () => {
 
     };
 
+    // Auth check using useEffect
+    useEffect(() => {
+        console.log('use effect entered')
+        axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+            .then((response) => {
+                // If user is authorized (logged in), no action needed
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 401) {
+                    // If user is unauthorized (not logged in), redirect to Google OAuth login
+                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                }
+            });
+
+        axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
+            .then((response) => {
+                if (response.data.onboarded) {
+                    navigate('/search')
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }, []);
+
 
     return (
         <div className="login-area d-flex align-items-center justify-content-center">
             <div className="row justify-content-center">
-                <div className="col-lg-8">
+                <div className="col-sm-8 my-5">
                     <div className="card">
                         <div className="card-body">
                             <h3 className="card-title">Select Your Preferences</h3>
@@ -69,7 +93,7 @@ const OnboardingForm = () => {
                                 Then decide whether you want to exclude those emails from your database.
                             </p>
                             <div className="d-flex justify-content-center">
-                                <img src={categoryExample} alt="Gmail Search Tag" className="img-fluid mb-3" />
+                                <img src={categoryExample} alt="Gmail Search Tag" className="img-fluid mb-3" style={{ transform: 'scale(0.8)' }} />
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="row mb-3">

@@ -26,7 +26,7 @@
   .login-area {
     background: linear-gradient(to right bottom, rgb(121, 121, 240), rgb(238, 201, 201)); /* Navy Blue background color similar to GitHub theme */
     width: 100%;
-    height: 100vh;
+    height: 100%;
   }
 
   /* .login-area {

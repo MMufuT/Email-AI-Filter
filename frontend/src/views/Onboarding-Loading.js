@@ -27,15 +27,39 @@ const OnboardingLoading = () => {
 
         // }, 10000000000000)
         console.log('use effect entered')
+
+        axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+            .then((response) => {
+                console.log('User is authorized')
+                // If user is authorized (logged in), no action needed
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 401) {
+                    // If user is unauthorized (not logged in), redirect to Google OAuth login
+                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                }
+            });
+
         axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
-        .then(response => {
-            setLoading(false);
-            navigate('/search')
-        })
-        .catch(error => {
-            console.log(error);
-            setLoading(false);
-        })
+            .then(response => {
+                //if user has filled out the form and isn't onboared yet, continue onboarding
+                setLoading(false);
+                navigate('/search')
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 428) {
+                    // If user hasn't filled out the form, redirect to form
+                    setLoading(false)
+                    console.log('User needs to fill out form before onbaording')
+                    navigate('/onboarding/form');
+                } else if (error.response && error.response.status === 409) {
+                    // If user is already onboarded, redirect to search
+                    setLoading(false);
+                    navigate('/search');
+                    console.log('User is already onboarded');
+                }
+                setLoading(false);
+            })
 
     }, [])
 

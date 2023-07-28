@@ -6,6 +6,7 @@ const cors = require('cors')
 const passport = require('passport');
 const passportSetup = require('./auth/passport-setup');
 const cookieSession = require('cookie-session');
+const authCheck = require('./auth/auth-check');
 
 //express app
 const app = express();
@@ -46,8 +47,9 @@ app.use((req, res, next) => {
 //root route
 app.get('/', (req, res) => {
     res.status(200).send('Home Page');
-
 });
+
+
 
 //setting up routes
 const historyRoutes = require('./routes/history-api');
