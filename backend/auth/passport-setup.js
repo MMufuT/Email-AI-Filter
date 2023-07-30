@@ -2,10 +2,9 @@ require('dotenv').config()
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
 const User = require('../models/userSchema');
-const createEmbedding = require('../utils/create-embedding')
+const createEmbedding = require('../utils/embedding-functions')
 const { google } = require('googleapis');
 const { getGmailApiClient, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
-const { PineconeClient } = require('@pinecone-database/pinecone');
 const { QdrantClient } = require('@qdrant/js-client-rest');
 const { v4: uuidv4 } = require('uuid');
 

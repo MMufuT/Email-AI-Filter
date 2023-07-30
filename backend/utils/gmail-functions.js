@@ -2,15 +2,16 @@ require('dotenv').config();
 const { google } = require('googleapis');
 const { Configuration, OpenAIApi } = require('openai')
 const bluePrint = require('./instructions')
-const Bottleneck = require('bottleneck');
+// const Bottleneck = require('bottleneck');
 const User = require('../models/userSchema');
+const { addEmailtoQdrant } = require('./embedding-functions')
 
-const gmailLimiter = new Bottleneck({
-  reservoir: 35, // Number of requests allowed per interval
-  reservoirRefreshAmount: 35, // Number of requests to replenish the reservoir every interval
-  reservoirRefreshInterval: 1000, // Interval in milliseconds to replenish the reservoir
-  maxConcurrent: 1, // Number of concurrent requests allowed
-});
+// const gmailLimiter = new Bottleneck({
+//   reservoir: 35, // Number of requests allowed per interval
+//   reservoirRefreshAmount: 35, // Number of requests to replenish the reservoir every interval
+//   reservoirRefreshInterval: 1000, // Interval in milliseconds to replenish the reservoir
+//   maxConcurrent: 1, // Number of concurrent requests allowed
+// });
 
 const validateAccess = (oAuth2Client, user) => {
   if (oAuth2Client.isTokenExpiring()) {
@@ -205,19 +206,61 @@ const getPostOnboardingMail = (gmailApi, beforeDate) => {
 
 const newToOldMailSort = async (emails) => {
   // latest -> oldest
-  await emails.sort((a, b) => new Date(b.sentDate) - new Date(a.sentDate));
+  const newMail = await emails.sort((a, b) => new Date(b.sentDate) - new Date(a.sentDate));
+  return newMail
 }
 
-const loadMailToDB = (gmail, beforeDate, userId, pageToken = null, emails = []) => {
-  const processMessages = (pageToken) => {
-    gmailLimiter.schedule(() => {
-      console.log(`loaded: ${emails.length}`);
+
+const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = null) => {
+  const emails = [];
+
+  const retrieveAndProcessEmail = async (emailId) => {
+    return new Promise((resolve, reject) => {
+      gmail.users.messages.get(
+        {
+          userId: 'me',
+          id: emailId,
+          format: 'full',
+        },
+        (err, response) => {
+          if (err) {
+            console.error('Error retrieving email:', err);
+            reject(err);
+            return;
+          }
+
+          const rawEmailData = response.data;
+          const headers = rawEmailData.payload.headers;
+
+          const senderHeader = headers.find((header) => header.name === 'From');
+          const sender = senderHeader ? senderHeader.value : 'No Sender';
+
+          const subjectHeader = headers.find((header) => header.name === 'Subject');
+          const subject = subjectHeader ? subjectHeader.value : 'No Subject';
+
+          const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
+
+          const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
+
+          const sentDate = new Date(parseInt(rawEmailData.internalDate));
+
+          const email = { sender, subject, body, sentDate, gmailId };
+          User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec();
+          addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, sentDate)
+          resolve(email);
+        }
+      );
+    });
+  };
+
+  return new Promise((resolve, reject) => {
+    const processNextPage = async (pageToken) => {
       gmail.users.messages.list(
         {
           userId: 'me',
           labelIds: ['INBOX'],
           maxResults: 250, // Fetch 250 emails per request
-          q: `in:inbox before:${beforeDate}`,
+          q: filter,
           orderBy: 'internalDate desc',
           includeSpamTrash: false,
           pageToken: pageToken,
@@ -225,6 +268,7 @@ const loadMailToDB = (gmail, beforeDate, userId, pageToken = null, emails = []) 
         async (err, response) => {
           if (err) {
             console.error('Error retrieving latest email:', err);
+            reject(err);
             return;
           }
 
@@ -233,64 +277,45 @@ const loadMailToDB = (gmail, beforeDate, userId, pageToken = null, emails = []) 
 
           emails.push(...retrievedEmails);
 
-          for (let email of retrievedEmails) {
-            const emailId = email.id;
+          const promises = retrievedEmails.map((email) => retrieveAndProcessEmail(email.id));
 
-            gmailLimiter.schedule(() => {
-              gmail.users.messages.get(
-                {
-                  userId: 'me',
-                  id: emailId,
-                  format: 'full',
-                },
-                async (err, response) => {
-                  if (err) {
-                    console.error('Error retrieving email:', err);
-                    return;
-                  }
-
-                  const rawEmailData = response.data;
-                  const headers = rawEmailData.payload.headers;
-
-                  const senderHeader = headers.find((header) => header.name === 'From');
-                  const sender = senderHeader ? senderHeader.value : 'No Sender';
-
-                  const subjectHeader = headers.find((header) => header.name === 'Subject');
-                  const subject = subjectHeader ? subjectHeader.value : 'No Subject';
-
-                  const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
-
-                  const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
-
-                  const sentDate = new Date(parseInt(rawEmailData.internalDate));
-
-                  const email = { sender, subject, body, sentDate, gmailId };
-                  User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec();
-
-                  // openAI chat completion search function
-                  // const isMatch = await compareQueryWithEmail(email, query)
-
-                  // openAI embeddings search function
-
-                  // console.log(embedding)
-                  // console.log(emailData)
-                }
-              );
-            });
+          try {
+            const processedEmails = await Promise.all(promises);
+            resolve(processedEmails);
+          } catch (err) {
+            reject(err);
           }
 
           if (nextPageToken && emails.length < 750) {
-            processMessages(nextPageToken); // Fetch next page of emails
+            console.log(`loaded: ${emails.length}`);
+            try {
+              await processNextPage(nextPageToken);
+            } catch (err) {
+              reject(err);
+            }
           } else {
-            console.log(`Finished fetching and adding remaining 750  emails for user with ID: ${userId}`);
+            console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
+            const updatedUser = await User.findById(userId)
+            const sortedMail = await newToOldMailSort(updatedUser.emails)
+            //const sortedMail = updatedUser.emails
+
+            await User.findByIdAndUpdate(
+              userId,
+              {
+                latestEmail: sortedMail[0].sentDate,
+                emails: sortedMail,
+              }
+            );
           }
         }
       );
-    });
-  };
+    };
 
-  processMessages(pageToken); // Start fetching emails
+    processNextPage(pageToken); // Start fetching emails
+  });
 };
+
+
 
 
 module.exports = {

@@ -28,8 +28,7 @@ searchRouter.get('/', authCheck, async (req, res) => {
 
     await loadMailToDB(gmailApi, beforeDate, userId)
     const updatedUser = await User.findById(userId)
-    await newToOldMailSort(updatedUser.emails)
-    const sortedMail = updatedUser.emails
+    const sortedMail = await newToOldMailSort(updatedUser.emails)
 
 
     

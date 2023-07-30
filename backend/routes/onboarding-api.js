@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const onboardingRouter = express.Router();
 const User = require('../models/userSchema');
-const createEmbedding = require('../utils/create-embedding')
+const { addEmailtoQdrant, createQdrantCollection } = require('../utils/embedding-functions')
 const { google } = require('googleapis');
 const { getGmailApiClient, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const { PineconeClient } = require('@pinecone-database/pinecone');
@@ -10,11 +10,12 @@ const { QdrantClient } = require('@qdrant/js-client-rest');
 const { v4: uuidv4 } = require('uuid');
 const getOAuthClient = require('../utils/get-oauth')
 const authCheck = require('../auth/auth-check');
+const { onboardingQueue } = require('../utils/queue');
 
-const qdrant = new QdrantClient({
-    url: process.env.QDRANT_URL,
-    apiKey: process.env.QDRANT_API_KEY,
-});
+// const qdrant = new QdrantClient({
+//     url: process.env.QDRANT_URL,
+//     apiKey: process.env.QDRANT_API_KEY,
+// });
 
 onboardingRouter.use(authCheck)
 
@@ -31,6 +32,7 @@ onboardingRouter.post('/loading', async (req, res) => {
             //onboarding logic
 
             // pause redis queue
+            onboardingQueue.pause()
 
             // get last 250 gmails
             const inboxFilter = currentUser.inboxFilter
@@ -40,51 +42,50 @@ onboardingRouter.post('/loading', async (req, res) => {
 
             const gmailApi = getGmailApiClient(oAuth2Client, currentUser)
             const emails = await getOnboardingMail(gmailApi, inboxFilter)
-            newToOldMailSort(emails) //emails sorted (latest -> oldest)
+            const sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
+
+
 
             // un-pause redis queue b/c we're done using gmail api
-
-            try {
-                qdrant.createCollection(emailAddress, {
-                    vectors: {
-                        size: 1536,
-                        distance: 'Cosine'
-                    }
-
-                })
-            } catch (error) {
-                console.error('Error occurred during upsert:', error.message);
-                return res.status(500).json({ error: 'An error occured while creating Qdrarnt Vector Database collection' })
-            }
+            // add user to the end of the queue
+            onboardingQueue.resume()
 
 
-            for (let email of emails) {
-                input = `The following text is an email...\n\nSender: ${email.sender}
-                \n\nSubject: ${email.subject}\n\nBody: ${email.body}`
-                const embedding = await createEmbedding(input) //embedding is an array
+            createQdrantCollection(emailAddress)
 
-                qdrant.upsert(emailAddress, {
-                    points: [{
-                        id: uuidv4(), // Universally Unique Identifier
-                        vector: embedding,
-                        payload: {
-                            sender: email.sender,
-                            gmailId: email.gmailId,
-                            sentDate: email.sentDate
-                        }
-                    }]
-                })
+
+            for (let email of sortedEmails) {
+                //addEmailtoQdrant(email.sender, email.subject, email.body, email.gmailId, email.sentDate)
+                await addEmailtoQdrant(emailAddress, email.sender, email.subject, email.body, email.gmailId, email.sentDate)
+
+                // input = `The following text is an email...\n\nSender: ${email.sender}
+                // \n\nSubject: ${email.subject}\n\nBody: ${email.body}`
+                // const embedding = await createEmbedding(input) //embedding is an array
+
+                // qdrant.upsert(emailAddress, {
+                //     points: [{
+                //         id: uuidv4(), // Universally Unique Identifier
+                //         vector: embedding,
+                //         payload: {
+                //             sender: email.sender,
+                //             gmailId: email.gmailId,
+                //             sentDate: email.sentDate
+                //         }
+                //     }]
+                // })
             }
 
 
             await User.findByIdAndUpdate(
                 currentUser.id,
                 {
-                    latestEmail: emails[0].sentDate,
+                    latestEmail: sortedEmails[0].sentDate,
                     isOnboarded: true,
-                    emails: emails,
+                    emails: sortedEmails,
                 }
             );
+            onboardingQueue.add('onboarding', { userId: currentUser.id })
+
             console.log('\nFinished onboarding: User updated with onboarding data:\n')
             res.status(200).send('Success: Onboarding Complete')
 

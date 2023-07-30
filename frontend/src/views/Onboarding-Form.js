@@ -70,6 +70,7 @@ const OnboardingForm = () => {
         axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
             .then((response) => {
                 if (response.data.onboarded) {
+                    // redirects if user is already onboarded
                     navigate('/search')
                 }
             })
