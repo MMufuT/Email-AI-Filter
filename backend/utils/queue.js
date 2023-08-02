@@ -7,29 +7,14 @@ const User = require('../models/userSchema');
 const { getGmailApiClient, loadMailToDB, newToOldMailSort } = require('./gmail-functions')
 const getOAuthClient = require('./get-oauth')
 
-// const redisClient = createClient({
-//     password: process.env.REDIS_PASSWORD,
-//     socket: {
-//         host: process.env.REDIS_HOST,
-//         port: 15768
-//     }
-// });
-
-// // Create the "onboardingQueue"
-// const onboardingQueue = new Queue('onboardingQueue', {
-//     createClient: () => redisClient,
-// });
-
-
-
-
 
 const onboardingQueue = new Queue('onboarding-queue', {
     redis: {
         port: 15768,
         host: process.env.REDIS_HOST,
         password: process.env.REDIS_PASSWORD
-    } });
+    }
+});
 
 onboardingQueue.process('onboarding', async (job, done) => {
     console.log(`Job ${job.id} started in onboarding-queue.`)
@@ -54,25 +39,37 @@ onboardingQueue.process('onboarding', async (job, done) => {
         const emailAddress = user.emailAddress;
         const oAuth2Client = await getOAuthClient(user);
         const gmailApi = await getGmailApiClient(oAuth2Client, user);
-    
-        const emails = await user.emails;
+
+        const emails = user.emails;
         let oldestEmailDate = emails[emails.length - 1].sentDate;
         oldestEmailDate = Math.floor(oldestEmailDate.getTime() / 1000); // converting to ISO format
         console.log(oldestEmailDate);
-    
+
         const filter = user.inboxFilter + ` before:${oldestEmailDate}`;
         console.log(`Rest of emails loaded with this filter: ${filter}`);
-    
+
         // await the completion of loadMailToDB
         await onboardingRateLimiter.schedule(loadMailToDB, gmailApi, filter, userId, emailAddress);
-    
+        onboardingRateLimiter.schedule(() => loadMailToDB(gmailApi, filter, userId, emailAddress))
+            .then(async () => {
+                const updatedUser = await User.findById(userId)
+                const sortedMail = await newToOldMailSort(updatedUser.emails)
+                //const sortedMail = updatedUser.emails
+
+                await User.findByIdAndUpdate(userId, {
+                    latestEmail: sortedMail[0].sentDate,
+                    emails: sortedMail,
+                })
+            })
+
+
         // Job is done successfully
         done();
-      } catch (error) {
+    } catch (error) {
         // Job failed, pass the error to done callback
         done(error);
-      }
-    });
+    }
+});
 
 // Event handling for "onboardingQueue"
 onboardingQueue.on('completed', (job) => {

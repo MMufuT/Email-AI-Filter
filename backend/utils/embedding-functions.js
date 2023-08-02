@@ -14,21 +14,21 @@ const qdrant = new QdrantClient({
 
 // embedding method
 const createEmbedding = async (input) => {
-
-  const response = await openai.createEmbedding({
+  return await openai.createEmbedding({
     model: 'text-embedding-ada-002',
     input: input
   })
-  return response.data.data[0].embedding
+    .then((response) => { response.data.data[0].embedding })
+    .catch((error) => {
+      console.error('Error occured while creating Open AI embedding: ' + error)
+    })
 }
 
 const addEmailtoQdrant = async (emailAddress, sender, subject, body, gmailId, sentDate) => {
-
   input = `The following text is an email...\n\nSender: ${sender}
                 \n\nSubject: ${subject}\n\nBody: ${body}`
-  const embedding = await createEmbedding(input) //embedding is an array
-
-  qdrant.upsert(emailAddress, {
+  const embedding = createEmbedding(input) //embedding is 1536 dimensional array
+  await qdrant.upsert(emailAddress, {
     points: [{
       id: uuidv4(), // Universally Unique Identifier
       vector: embedding,
@@ -39,25 +39,25 @@ const addEmailtoQdrant = async (emailAddress, sender, subject, body, gmailId, se
       }
     }]
   })
+  .catch((error) => {
+    console.error('Error occured while uploading vector to Qdrant database: ' + error)
+  })
 }
 
-const createQdrantCollection = (emailAddress) => {
-  try {
-    qdrant.createCollection(emailAddress, {
+const createQdrantCollection = async (emailAddress) => {
+    await qdrant.createCollection(emailAddress, {
       vectors: {
         size: 1536,
         distance: 'Cosine'
       }
-
     })
-  } catch (error) {
-    console.error('Error occurred during upsert:', error.message);
-    return res.status(500).json({ error: 'An error occured while creating Qdrarnt Vector Database collection' })
+      .catch((error) => {
+        console.error('Error occurred during Qdrant collection creation: ' + error);
+      })
   }
-}
 
 module.exports = {
-  createEmbedding,
-  addEmailtoQdrant,
-  createQdrantCollection
-}
+    createEmbedding,
+    addEmailtoQdrant,
+    createQdrantCollection
+  }

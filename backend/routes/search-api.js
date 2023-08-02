@@ -5,7 +5,7 @@ const User = require('../models/userSchema');
 const passport = require('passport');
 const authCheck = require('../auth/auth-check');
 const { google } = require('googleapis');
-const { getGmailApiClient, loadMailToDB, getOnboardingMail, getPostOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
+const { getGmailApiClient, loadMailToDB, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const getOAuthClient = require('../utils/get-oauth')
 
 

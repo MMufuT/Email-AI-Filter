@@ -28,6 +28,7 @@ onboardingRouter.post('/loading', async (req, res) => {
     try {//onboarding logic here
         const currentUser = req.user
         const { isOnboarded, emailAddress } = currentUser
+        const userId = currentUser.id
         if (!isOnboarded && currentUser.inboxFilter) {
             //onboarding logic
 
@@ -36,11 +37,11 @@ onboardingRouter.post('/loading', async (req, res) => {
 
             // get last 250 gmails
             const inboxFilter = currentUser.inboxFilter
-            const oAuth2Client = getOAuthClient(currentUser)
+            const oAuth2Client = await getOAuthClient(currentUser)
 
 
 
-            const gmailApi = getGmailApiClient(oAuth2Client, currentUser)
+            const gmailApi = await getGmailApiClient(oAuth2Client, currentUser)
             const emails = await getOnboardingMail(gmailApi, inboxFilter)
             const sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
 
@@ -51,40 +52,22 @@ onboardingRouter.post('/loading', async (req, res) => {
             onboardingQueue.resume()
 
 
-            createQdrantCollection(emailAddress)
+            await createQdrantCollection(emailAddress)
 
 
             for (let email of sortedEmails) {
-                //addEmailtoQdrant(email.sender, email.subject, email.body, email.gmailId, email.sentDate)
                 await addEmailtoQdrant(emailAddress, email.sender, email.subject, email.body, email.gmailId, email.sentDate)
-
-                // input = `The following text is an email...\n\nSender: ${email.sender}
-                // \n\nSubject: ${email.subject}\n\nBody: ${email.body}`
-                // const embedding = await createEmbedding(input) //embedding is an array
-
-                // qdrant.upsert(emailAddress, {
-                //     points: [{
-                //         id: uuidv4(), // Universally Unique Identifier
-                //         vector: embedding,
-                //         payload: {
-                //             sender: email.sender,
-                //             gmailId: email.gmailId,
-                //             sentDate: email.sentDate
-                //         }
-                //     }]
-                // })
             }
 
-
             await User.findByIdAndUpdate(
-                currentUser.id,
+                userId,
                 {
                     latestEmail: sortedEmails[0].sentDate,
                     isOnboarded: true,
                     emails: sortedEmails,
                 }
             );
-            onboardingQueue.add('onboarding', { userId: currentUser.id })
+            onboardingQueue.add('onboarding', { userId: userId })
 
             console.log('\nFinished onboarding: User updated with onboarding data:\n')
             res.status(200).send('Success: Onboarding Complete')
