@@ -32,24 +32,26 @@ onboardingRouter.post('/loading', async (req, res) => {
         if (!isOnboarded && currentUser.inboxFilter) {
             //onboarding logic
 
-            // pause redis queue
-            onboardingQueue.pause()
+
 
             // get last 250 gmails
             const inboxFilter = currentUser.inboxFilter
             const oAuth2Client = await getOAuthClient(currentUser)
+            let sortedEmails
 
-
-
-            const gmailApi = await getGmailApiClient(oAuth2Client, currentUser)
-            const emails = await getOnboardingMail(gmailApi, inboxFilter)
-            const sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
-
-
+            // pause redis queue
+            await onboardingQueue.pause()
+                .then(async () => {
+                    console.log(`Queue was paused for: ${emailAddress}`)
+                    const gmailApi = await getGmailApiClient(oAuth2Client, currentUser)
+                    const emails = await getOnboardingMail(gmailApi, inboxFilter)
+                    sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
+                })
 
             // un-pause redis queue b/c we're done using gmail api
             // add user to the end of the queue
             onboardingQueue.resume()
+            console.log('Queue was resumed')
 
 
             await createQdrantCollection(emailAddress)

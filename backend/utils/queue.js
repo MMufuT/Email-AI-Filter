@@ -49,8 +49,7 @@ onboardingQueue.process('onboarding', async (job, done) => {
         console.log(`Rest of emails loaded with this filter: ${filter}`);
 
         // await the completion of loadMailToDB
-        await onboardingRateLimiter.schedule(loadMailToDB, gmailApi, filter, userId, emailAddress);
-        onboardingRateLimiter.schedule(() => loadMailToDB(gmailApi, filter, userId, emailAddress))
+        await onboardingRateLimiter.schedule(() => loadMailToDB(gmailApi, filter, userId, emailAddress))
             .then(async () => {
                 const updatedUser = await User.findById(userId)
                 const sortedMail = await newToOldMailSort(updatedUser.emails)

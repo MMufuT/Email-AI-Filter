@@ -13,7 +13,7 @@ const { addEmailtoQdrant } = require('./embedding-functions')
 //   maxConcurrent: 1, // Number of concurrent requests allowed
 // });
 
-const validateAccess = (oAuth2Client, user) => {
+const validateAccess = async (oAuth2Client, user) => {
   if (oAuth2Client.isTokenExpiring()) {
     oAuth2Client.setCredentials({
       refresh_token: user.refreshToken
@@ -135,7 +135,7 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
           id: emailId,
           format: 'full',
         },
-        (err, response) => {
+        async (err, response) => {
           if (err) {
             console.error('Error retrieving email:', err);
             reject(err);
@@ -160,8 +160,10 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
           const email = { sender, subject, body, sentDate, gmailId };
           // User.findByIdAndUpdate(userId, { $push: { emails: email } })
           //   .then(() => {
-          addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, sentDate)
-          User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec();
+          await Promise.all([
+            addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, sentDate),
+            User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
+          ]);
           resolve(email);
           // })
         }
@@ -171,6 +173,7 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
 
   return new Promise(async (resolve, reject) => {
     const processNextPage = async (pageToken) => {
+      console.log(pageToken)
       try {
         gmail.users.messages.list(
           {
@@ -193,25 +196,25 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
             const retrievedEmails = response.data.messages;
 
             await Promise.all(retrievedEmails.map((email) => retrieveAndProcessEmail(email.id)))
-            .then(async () => {
-              num++
-              emails.push(...retrievedEmails)
-              if (nextPageToken && num < 3) {
-                console.log(`loaded: ${emails.length}`);
-                await processNextPage(nextPageToken)
-              } else {
-                console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
-                resolve()
-                return
-              }
-            })
+              .then(() => {
+                num++
+                emails.push(...retrievedEmails)
+                if (nextPageToken && num < 3) {
+                  console.log(`loaded: ${emails.length}`);
+                  processNextPage(nextPageToken)
+                } else {
+                  console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
+                  resolve()
+                  return
+                }
+              })
 
             // // Push individual email objects to the emails array
             // retrievedEmails.forEach((email) => {
             //   emails.push(email);
             // });
 
-            
+
           }
         )
       }
