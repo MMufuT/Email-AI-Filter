@@ -11,6 +11,7 @@ const { v4: uuidv4 } = require('uuid');
 const getOAuthClient = require('../utils/get-oauth')
 const authCheck = require('../auth/auth-check');
 const { onboardingQueue } = require('../utils/queue');
+const { qdrantLock } = require('../utils/mutex')
 
 // const qdrant = new QdrantClient({
 //     url: process.env.QDRANT_URL,
@@ -54,12 +55,20 @@ onboardingRouter.post('/loading', async (req, res) => {
             console.log('Queue was resumed')
 
 
+            // use mutex key to make to prevent race condition from causing bad gateway error in createColelction
+            const release = await qdrantLock.acquire()
+            console.log(`qdrant lock acquired for: ${emailAddress}`)
             await createQdrantCollection(emailAddress)
-
+            console.log(`Collection "${emailAddress}" created!`)
+            
 
             for (let email of sortedEmails) {
-                await addEmailtoQdrant(emailAddress, email.sender, email.subject, email.body, email.gmailId, email.sentDate)
+                const unixTimestamp = Math.floor(email.sentDate.getTime() / 1000);
+                addEmailtoQdrant(emailAddress, email.sender, email.subject, email.body, email.gmailId, unixTimestamp)
             }
+
+            release();
+            console.log(`qdrant lock released for: ${emailAddress}`)
 
             await User.findByIdAndUpdate(
                 userId,
@@ -69,7 +78,7 @@ onboardingRouter.post('/loading', async (req, res) => {
                     emails: sortedEmails,
                 }
             );
-            onboardingQueue.add('onboarding', { userId: userId })
+            onboardingQueue.add('onboarding', { userId: userId }, {removeOnComplete: true, removeOnFail: true})
 
             console.log('\nFinished onboarding: User updated with onboarding data:\n')
             res.status(200).send('Success: Onboarding Complete')

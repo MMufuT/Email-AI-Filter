@@ -125,7 +125,7 @@ const newToOldMailSort = async (emails) => {
 
 const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = null) => {
   const emails = [];
-  let num = 0
+  let batchesLoaded = 0 // 750 emails will be loaded in 3 batches (3 x 250 emails)
 
   const retrieveAndProcessEmail = async (emailId) => {
     return new Promise((resolve, reject) => {
@@ -155,13 +155,14 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
 
           const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
 
-          const sentDate = new Date(parseInt(rawEmailData.internalDate));
+          const unixTimestamp = rawEmailData.internalDate
+          const sentDate = new Date(parseInt(unixTimestamp));
 
           const email = { sender, subject, body, sentDate, gmailId };
           // User.findByIdAndUpdate(userId, { $push: { emails: email } })
           //   .then(() => {
           await Promise.all([
-            addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, sentDate),
+            addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, unixTimestamp),
             User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
           ]);
           resolve(email);
@@ -197,9 +198,9 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
 
             await Promise.all(retrievedEmails.map((email) => retrieveAndProcessEmail(email.id)))
               .then(() => {
-                num++
+                batchesLoaded++
                 emails.push(...retrievedEmails)
-                if (nextPageToken && num < 3) {
+                if (nextPageToken && batchesLoaded < 3) {
                   console.log(`loaded: ${emails.length}`);
                   processNextPage(nextPageToken)
                 } else {

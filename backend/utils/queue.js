@@ -7,14 +7,20 @@ const User = require('../models/userSchema');
 const { getGmailApiClient, loadMailToDB, newToOldMailSort } = require('./gmail-functions')
 const getOAuthClient = require('./get-oauth')
 
+// this will be run in case the job is stopped midway and restarted for whatever reason
+// it will make sure the resulting emails array in MongoDB has not duplicate emails
+const removeDuplicates = (objectsArray) =>
+  [...new Set(objectsArray.map(JSON.stringify))].map(JSON.parse);
 
-const onboardingQueue = new Queue('onboarding-queue', {
+
+  const onboardingQueue = new Queue('onboarding-queue', {
     redis: {
         port: 15768,
         host: process.env.REDIS_HOST,
         password: process.env.REDIS_PASSWORD
     }
 });
+
 
 onboardingQueue.process('onboarding', async (job, done) => {
     console.log(`Job ${job.id} started in onboarding-queue.`)
@@ -52,8 +58,8 @@ onboardingQueue.process('onboarding', async (job, done) => {
         await onboardingRateLimiter.schedule(() => loadMailToDB(gmailApi, filter, userId, emailAddress))
             .then(async () => {
                 const updatedUser = await User.findById(userId)
-                const sortedMail = await newToOldMailSort(updatedUser.emails)
-                //const sortedMail = updatedUser.emails
+                let sortedMail = await newToOldMailSort(updatedUser.emails)
+                sortedMail = removeDuplicates(sortedMail)
 
                 await User.findByIdAndUpdate(userId, {
                     latestEmail: sortedMail[0].sentDate,

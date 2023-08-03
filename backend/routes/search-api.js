@@ -7,6 +7,7 @@ const authCheck = require('../auth/auth-check');
 const { google } = require('googleapis');
 const { getGmailApiClient, loadMailToDB, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const getOAuthClient = require('../utils/get-oauth')
+const { getSearchResults } = require('../utils/embedding-functions')
 
 
 
@@ -15,34 +16,14 @@ const getOAuthClient = require('../utils/get-oauth')
 
 searchRouter.get('/', authCheck, async (req, res) => {
     const user = req.user
-    userId = user.id
-    const oAuth2Client = await getOAuthClient(user)
-
-
-    //if button is pressed
-    const gmailApi = await getGmailApiClient(oAuth2Client, user);
-    let emails = await user.emails
-    let beforeDate = emails[emails.length-1].sentDate
-    beforeDate = Math.floor(beforeDate.getTime() / 1000);
-    console.log(beforeDate)
-
-    await loadMailToDB(gmailApi, beforeDate, userId)
-    const updatedUser = await User.findById(userId)
-    const sortedMail = await newToOldMailSort(updatedUser.emails)
-
+    const query = 'Search for an email that looks like a transaction'
+    const range = {before: null, after: 0}
+    const { emailAddress } = user
+    const results = await getSearchResults(emailAddress, query, `service@paypal.com`, range)
+    console.log(results.length)
 
     
-    
-    await User.findByIdAndUpdate(
-        userId,
-        {
-            latestEmail: sortedMail[0].sentDate,
-            emails: sortedMail,
-        }
-    );
-
-
-    res.json({ mssg: 'Search Screen.. username: ' + user.username })
+    res.json({ email: emailAddress, results: results })
 });
 
 //Post a new history tab to the /history path
