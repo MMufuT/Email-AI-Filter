@@ -8,19 +8,18 @@ const dbUpdateRateLimit = 10
 // minTime: Time in ms between each API call
 
 const onboardingRateLimiter = new Bottleneck({
-    maxConcurrent: 1,
-    minTime: 1000 / onboardingRateLimit,
-  });
+  minTime: 1000 / onboardingRateLimit,
+});
 
-  const dbUpdateRateLimiter = new Bottleneck({
-    maxConcurrent: 1,
-    minTime: 1000 / dbUpdateRateLimit,
-  });
+const dbUpdateRateLimiter = new Bottleneck({
+  maxConcurrent: 1,
+  minTime: 1000 / dbUpdateRateLimit,
+});
 
 
 module.exports = {
-    onboardingRateLimiter,
-    dbUpdateRateLimiter
+  onboardingRateLimiter,
+  dbUpdateRateLimiter
 }
 
 

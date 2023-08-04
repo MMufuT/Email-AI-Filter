@@ -69,6 +69,7 @@ onboardingQueue.process('onboarding', async (job, done) => {
 
 
         // Job is done successfully
+        onboardingQueue.removeAllListeners('onboarding')
         done();
     } catch (error) {
         // Job failed, pass the error to done callback
@@ -79,10 +80,12 @@ onboardingQueue.process('onboarding', async (job, done) => {
 // Event handling for "onboardingQueue"
 onboardingQueue.on('completed', (job) => {
     console.log(`Job ${job.id} completed in onboardingQueue.`);
+    onboardingQueue.removeAllListeners('completed')
 });
 
 onboardingQueue.on('failed', (job, error) => {
     console.log(`Job ${job.id} failed in onboardingQueue with error: ${error.message}`);
+    onboardingQueue.removeAllListeners('failed')
 });
 
 // // Create the "dbUpdateQueue"

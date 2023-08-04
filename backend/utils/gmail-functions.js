@@ -5,6 +5,7 @@ const bluePrint = require('./instructions')
 // const Bottleneck = require('bottleneck');
 const User = require('../models/userSchema');
 const { addEmailtoQdrant } = require('./embedding-functions')
+const { promisify } = require('util')
 
 // const gmailLimiter = new Bottleneck({
 //   reservoir: 35, // Number of requests allowed per interval
@@ -34,7 +35,6 @@ const getGmailApiClient = async (oAuth2Client, user) => {
 
 const getOnboardingMail = (gmail, filter) => {
   return new Promise((resolve, reject) => {
-    const emails = [];
     gmail.users.messages.list(
       {
         userId: 'me',
@@ -124,84 +124,76 @@ const newToOldMailSort = async (emails) => {
 }
 
 const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = null) => {
-  const emails = [];
   let batchesLoaded = 0 // 750 emails will be loaded in 3 batches (3 x 250 emails)
+  const getEmailAsync = promisify(gmail.users.messages.get).bind(gmail.users.messages);
+  const listMessagesAsync = promisify(gmail.users.messages.list.bind(gmail.users.messages));
+
 
   const retrieveAndProcessEmail = async (emailId) => {
-    return new Promise((resolve, reject) => {
-      gmail.users.messages.get(
-        {
-          userId: 'me',
-          id: emailId,
-          format: 'full',
-        },
-        async (err, response) => {
-          if (err) {
-            console.error('Error retrieving email:', err);
-            reject(err);
-            return;
-          }
+    
 
-          const rawEmailData = response.data;
-          const headers = rawEmailData.payload.headers;
+    try {
+      const response = await getEmailAsync({
+        userId: 'me',
+        id: emailId,
+        format: 'full',
+      });
 
-          const senderHeader = headers.find((header) => header.name === 'From');
-          const sender = senderHeader ? senderHeader.value : 'No Sender';
+      const rawEmailData = response.data;
+      const headers = rawEmailData.payload.headers;
 
-          const subjectHeader = headers.find((header) => header.name === 'Subject');
-          const subject = subjectHeader ? subjectHeader.value : 'No Subject';
+      const senderHeader = headers.find((header) => header.name === 'From');
+      const sender = senderHeader ? senderHeader.value : 'No Sender';
 
-          const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
+      const subjectHeader = headers.find((header) => header.name === 'Subject');
+      const subject = subjectHeader ? subjectHeader.value : 'No Subject';
 
-          const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
+      const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
 
-          const unixTimestamp = rawEmailData.internalDate
-          const sentDate = new Date(parseInt(unixTimestamp));
+      const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
 
-          const email = { sender, subject, body, sentDate, gmailId };
-          // User.findByIdAndUpdate(userId, { $push: { emails: email } })
-          //   .then(() => {
-          await Promise.all([
-            addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, unixTimestamp),
-            User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
-          ]);
-          resolve(email);
-          // })
-        }
-      );
-    });
+      const unixTimestamp = rawEmailData.internalDate;
+      const sentDate = new Date(parseInt(unixTimestamp));
+
+      const email = { sender, subject, body, sentDate, gmailId };
+
+      await Promise.all([
+        addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, unixTimestamp),
+        User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
+      ]);
+
+      return email;
+    } catch (error) {
+      console.error('Error retrieving email:', error);
+      throw error;
+    }
   };
+
 
   return new Promise(async (resolve, reject) => {
     const processNextPage = async (pageToken) => {
       console.log(pageToken)
       try {
-        gmail.users.messages.list(
-          {
-            userId: 'me',
-            labelIds: ['INBOX'],
-            maxResults: 250, // Fetch 250 emails per request
-            q: filter,
-            orderBy: 'internalDate desc',
-            includeSpamTrash: false,
-            pageToken: pageToken,
-          },
-          async (err, response) => {
-            if (err) {
-              console.error('Error retrieving latest email: ', err);
-              reject(err);
-              return;
-            }
+        const response = await listMessagesAsync({
+          userId: 'me',
+          labelIds: ['INBOX'],
+          maxResults: 250,
+          q: filter,
+          orderBy: 'internalDate desc',
+          includeSpamTrash: false,
+          pageToken: pageToken,
+        });
+
 
             const nextPageToken = response.data.nextPageToken;
             const retrievedEmails = response.data.messages;
 
-            await Promise.all(retrievedEmails.map((email) => retrieveAndProcessEmail(email.id)))
+            await Promise.all(retrievedEmails.map(async (email) => await retrieveAndProcessEmail(email.id)))
               .then(() => {
                 batchesLoaded++
-                emails.push(...retrievedEmails)
+                emailsLoaded = batchesLoaded * 250
                 if (nextPageToken && batchesLoaded < 3) {
-                  console.log(`loaded: ${emails.length}`);
+                  console.log(`loaded: ${emailsLoaded}`);
                   processNextPage(nextPageToken)
                 } else {
                   console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
@@ -214,16 +206,12 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
             // retrievedEmails.forEach((email) => {
             //   emails.push(email);
             // });
-
-
-          }
-        )
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error while fetching 250 Emails: ' + error)
         reject(error)
         return
       }
+      
     };
 
     processNextPage(pageToken) // Start fetching emails
