@@ -47,11 +47,8 @@ app.use((req, res, next) => {
 
 //root route
 app.get('/', (req, res) => {
-    onboardingQueue.removeAllListeners('onboarding')
-    onboardingQueue.removeAllListeners('completed')
-    onboardingQueue.removeAllListeners('failed')
     onboardingQueue.empty()
-    console.log('listeners removed, queue cleaned')
+    console.log('queue cleaned')
     res.status(200).send('Home Page');
 });
 

@@ -10,10 +10,20 @@ const getOAuthClient = require('./get-oauth')
 // this will be run in case the job is stopped midway and restarted for whatever reason
 // it will make sure the resulting emails array in MongoDB has not duplicate emails
 const removeDuplicates = (objectsArray) =>
-  [...new Set(objectsArray.map(JSON.stringify))].map(JSON.parse);
+    [...new Set(objectsArray.map(JSON.stringify))].map(JSON.parse);
+
+    const waitForEmptyLimiter = ((limiter, done) => {
+        new Promise((resolve) => {
+            limiter.on("empty", () => {
+                console.log("Rate limiter is empty.");
+                done()
+                resolve();
+            });
+        })
+    });
 
 
-  const onboardingQueue = new Queue('onboarding-queue', {
+const onboardingQueue = new Queue('onboarding-queue', {
     redis: {
         port: 15768,
         host: process.env.REDIS_HOST,
@@ -24,6 +34,8 @@ const removeDuplicates = (objectsArray) =>
 
 onboardingQueue.process('onboarding', async (job, done) => {
     console.log(`Job ${job.id} started in onboarding-queue.`)
+    console.log(onboardingRateLimiter.counts())
+
     // Process the job for onboarding tasks
 
     // user will have access and refresh tokens. get gmail api client with those
@@ -55,22 +67,21 @@ onboardingQueue.process('onboarding', async (job, done) => {
         console.log(`Rest of emails loaded with this filter: ${filter}`);
 
         // await the completion of loadMailToDB
-        await onboardingRateLimiter.schedule(() => loadMailToDB(gmailApi, filter, userId, emailAddress))
+        await onboardingRateLimiter.schedule(() => { return loadMailToDB(gmailApi, filter, userId, emailAddress) })
             .then(async () => {
                 const updatedUser = await User.findById(userId)
                 let sortedMail = await newToOldMailSort(updatedUser.emails)
-                sortedMail = removeDuplicates(sortedMail)
+                //sortedMail = removeDuplicates(sortedMail)
 
                 await User.findByIdAndUpdate(userId, {
                     latestEmail: sortedMail[0].sentDate,
                     emails: sortedMail,
                 })
             })
-
-
-        // Job is done successfully
-        onboardingQueue.removeAllListeners('onboarding')
-        done();
+            .catch((error) => {
+                console.log(`Hello there's an error: ${error}`)
+            })
+        waitForEmptyLimiter(onboardingRateLimiter, done)
     } catch (error) {
         // Job failed, pass the error to done callback
         done(error);
@@ -80,12 +91,10 @@ onboardingQueue.process('onboarding', async (job, done) => {
 // Event handling for "onboardingQueue"
 onboardingQueue.on('completed', (job) => {
     console.log(`Job ${job.id} completed in onboardingQueue.`);
-    onboardingQueue.removeAllListeners('completed')
 });
 
 onboardingQueue.on('failed', (job, error) => {
     console.log(`Job ${job.id} failed in onboardingQueue with error: ${error.message}`);
-    onboardingQueue.removeAllListeners('failed')
 });
 
 // // Create the "dbUpdateQueue"

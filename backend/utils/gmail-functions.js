@@ -6,6 +6,7 @@ const bluePrint = require('./instructions')
 const User = require('../models/userSchema');
 const { addEmailtoQdrant } = require('./embedding-functions')
 const { promisify } = require('util')
+const { onboardingRateLimiter } = require('./rate-limits')
 
 // const gmailLimiter = new Bottleneck({
 //   reservoir: 35, // Number of requests allowed per interval
@@ -125,48 +126,51 @@ const newToOldMailSort = async (emails) => {
 
 const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = null) => {
   let batchesLoaded = 0 // 750 emails will be loaded in 3 batches (3 x 250 emails)
-  const getEmailAsync = promisify(gmail.users.messages.get).bind(gmail.users.messages);
+  const getEmailAsync = promisify(gmail.users.messages.get.bind(gmail.users.messages));
   const listMessagesAsync = promisify(gmail.users.messages.list.bind(gmail.users.messages));
 
 
   const retrieveAndProcessEmail = async (emailId) => {
-    
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await getEmailAsync({
+          userId: 'me',
+          id: emailId,
+          format: 'full',
+        });
 
-    try {
-      const response = await getEmailAsync({
-        userId: 'me',
-        id: emailId,
-        format: 'full',
-      });
+        const rawEmailData = response.data;
+        const headers = rawEmailData.payload.headers;
 
-      const rawEmailData = response.data;
-      const headers = rawEmailData.payload.headers;
+        const senderHeader = headers.find((header) => header.name === 'From');
+        const sender = senderHeader ? senderHeader.value : 'No Sender';
 
-      const senderHeader = headers.find((header) => header.name === 'From');
-      const sender = senderHeader ? senderHeader.value : 'No Sender';
+        const subjectHeader = headers.find((header) => header.name === 'Subject');
+        const subject = subjectHeader ? subjectHeader.value : 'No Subject';
 
-      const subjectHeader = headers.find((header) => header.name === 'Subject');
-      const subject = subjectHeader ? subjectHeader.value : 'No Subject';
+        const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
 
-      const body = rawEmailData.snippet ? rawEmailData.snippet : 'No Body';
+        const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
 
-      const gmailId = rawEmailData.id ? rawEmailData.id : 'No Gmail ID';
+        const unixTimestamp = rawEmailData.internalDate;
+        const sentDate = new Date(parseInt(unixTimestamp));
 
-      const unixTimestamp = rawEmailData.internalDate;
-      const sentDate = new Date(parseInt(unixTimestamp));
+        const email = { sender, subject, body, sentDate, gmailId };
 
-      const email = { sender, subject, body, sentDate, gmailId };
+        await Promise.all([
+          addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, unixTimestamp),
+          User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
+        ]);
 
-      await Promise.all([
-        addEmailtoQdrant(emailAddress, sender, subject, body, gmailId, unixTimestamp),
-        User.findByIdAndUpdate(userId, { $push: { emails: email } }).exec(),
-      ]);
+        resolve(email);
+      } catch (error) {
+        console.error('Error retrieving email:', error);
+        reject(error);
+      }
+    })
 
-      return email;
-    } catch (error) {
-      console.error('Error retrieving email:', error);
-      throw error;
-    }
+
+
   };
 
 
@@ -185,33 +189,37 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
         });
 
 
-            const nextPageToken = response.data.nextPageToken;
-            const retrievedEmails = response.data.messages;
+        const nextPageToken = response.data.nextPageToken;
+        const retrievedEmails = response.data.messages;
 
-            await Promise.all(retrievedEmails.map(async (email) => await retrieveAndProcessEmail(email.id)))
-              .then(() => {
-                batchesLoaded++
-                emailsLoaded = batchesLoaded * 250
-                if (nextPageToken && batchesLoaded < 3) {
-                  console.log(`loaded: ${emailsLoaded}`);
-                  processNextPage(nextPageToken)
-                } else {
-                  console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
-                  resolve()
-                  return
-                }
-              })
+        //async await here if doesnt work
+        await Promise.all(retrievedEmails.map((email) => {
+          //await retrieveAndProcessEmail(email.id)
+          onboardingRateLimiter.schedule(() => retrieveAndProcessEmail(email.id))
+        }))
 
-            // // Push individual email objects to the emails array
-            // retrievedEmails.forEach((email) => {
-            //   emails.push(email);
-            // });
+        batchesLoaded++
+        emailsLoaded = batchesLoaded * 250
+        if (nextPageToken && batchesLoaded < 3) {
+          console.log(`loaded: ${emailsLoaded}`);
+          console.log(onboardingRateLimiter.counts())
+          await processNextPage(nextPageToken)
+        } else {
+          console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
+          resolve()
+          return
+        }
+
+        // // Push individual email objects to the emails array
+        // retrievedEmails.forEach((email) => {
+        //   emails.push(email);
+        // });
       } catch (error) {
         console.error('Error while fetching 250 Emails: ' + error)
         reject(error)
         return
       }
-      
+
     };
 
     processNextPage(pageToken) // Start fetching emails

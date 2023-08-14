@@ -8,6 +8,7 @@ const dbUpdateRateLimit = 10
 // minTime: Time in ms between each API call
 
 const onboardingRateLimiter = new Bottleneck({
+  maxConcurrent: 8,
   minTime: 1000 / onboardingRateLimit,
 });
 
