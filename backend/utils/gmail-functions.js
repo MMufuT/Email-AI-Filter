@@ -203,9 +203,9 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
         if (nextPageToken && batchesLoaded < 3) {
           console.log(`loaded: ${emailsLoaded}`);
           console.log(onboardingRateLimiter.counts())
-          await processNextPage(nextPageToken)
+          processNextPage(nextPageToken)
         } else {
-          console.log(`Finished fetching and adding remaining 750 emails for user with ID: ${userId}`);
+          console.log(`Finished adding remaining 750 emails to worker queue user with ID: ${userId}`);
           resolve()
           return
         }

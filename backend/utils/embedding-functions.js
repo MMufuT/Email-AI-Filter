@@ -81,20 +81,28 @@ const getSearchResults = async (userEmail, query, senderEmailAddress, range) => 
     with_payload: {
       include: ['gmailId']
     },
-    filter: {
+    filter: senderEmailAddress ? {
       must: [
         {
           key: 'sender',
-          match: {
-            value: senderEmailAddress,
-          },
+          match: { value: senderEmailAddress },
           range: {
             lte: range.before ? range.before : currentUnixTime,
             gte: range.after ? range.after : 0
           }
-        },
-      ],
-    },
+        }
+      ]
+    } : {
+      must: [
+        {
+          key: 'sentDate',
+          range: {
+            lte: range.before ? range.before : currentUnixTime,
+            gte: range.after ? range.after : 0
+          }
+        }
+      ]
+    }
   });
 
   return results

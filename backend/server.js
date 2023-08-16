@@ -58,15 +58,13 @@ app.get('/', (req, res) => {
 const historyRoutes = require('./routes/history-api');
 const searchRoutes = require('./routes/search-api');
 const authRoutes = require('./routes/auth-api');
-const loadingMailRoutes = require('./routes/loading-mail')
 const onboardingRoutes = require('./routes/onboarding-api')
 app.use('/history', historyRoutes);
 app.use('/search', searchRoutes);
 app.use('/auth', authRoutes);
-app.use('/loading-mail', loadingMailRoutes)
 app.use('/onboarding', onboardingRoutes)
 
-//conntect to DB
+//connect to DB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         //listen for requests

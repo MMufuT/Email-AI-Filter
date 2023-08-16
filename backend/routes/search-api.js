@@ -1,7 +1,8 @@
 const express = require('express');
 const searchRouter = express.Router();
-const Search = require('../models/searchSchema');
+const Search = require('../models/historySchema');
 const User = require('../models/userSchema');
+const searchHistory = require('../models/historySchema');
 const passport = require('passport');
 const authCheck = require('../auth/auth-check');
 const { google } = require('googleapis');
@@ -12,48 +13,35 @@ const { getSearchResults } = require('../utils/embedding-functions')
 
 
 
+searchRouter.use(authCheck)
 
-
-searchRouter.get('/', authCheck, async (req, res) => {
+searchRouter.get('/', async (req, res) => {
     const user = req.user
-    const query = 'Search for an email that looks like a transaction'
-    const range = {before: null, after: 0}
-    const { emailAddress } = user
-    const results = await getSearchResults(emailAddress, query, `service@paypal.com`, range)
-    console.log(results.length)
+    // const { searchConfig } = req.searchConfig
+    // const senderAddress = searchCongi.senderAddress
+    const query = `career related emails` //searchConfig.query
+    const range = { before: null, after: null } //searchConfig.range
+    const { emailAddress, emails, gmailLinkId } = user
+    // const results = await getSearchResults(emailAddress, query, `service@paypal.com`, range)
+    const rawSearchResults = await getSearchResults(emailAddress, query, null, range)
+    const searchResults = rawSearchResults.map((data) => {
+        const email = emails.find(email => email.gmailId === data.payload.gmailId)
+        return {
+            sender: email.sender,
+            subject: email.subject,
+            body: email.body,
+            emailLink: `https://mail.google.com/mail/u/${gmailLinkId}/#inbox/${email.gmailId}`
+        }
+    })
 
-    
-    res.json({ email: emailAddress, results: results })
-});
+    searchHistory.create({
+        userId: user.id,
+        userEmailAddress: user.emailAddress,
+        query: query,
+        results: searchResults
+    })
 
-//Post a new history tab to the /history path
-searchRouter.post('/', async (req, res) => {
-    //const query = req.body;
-    const { query, results } = req.body;
-
-    try {
-
-        // Create a new Search document in the history collection
-        //Task: create search schema
-        //Note: 'search results' will be a const
-        //-----
-
-        // const searchResults = await performSearch(query);
-
-        // const Search = await Search.create({
-        //     query: req.body,
-        //     results: searchResults,
-        // });
-
-        // res.status(200).json(searchResults)
-
-        const newSearchSchema = await Search.create({ query, results })
-        res.status(200).json(newSearchSchema);
-
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-
+    res.json({ email: emailAddress, results: searchResults })
 });
 
 

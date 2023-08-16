@@ -12,15 +12,15 @@ const getOAuthClient = require('./get-oauth')
 const removeDuplicates = (objectsArray) =>
     [...new Set(objectsArray.map(JSON.stringify))].map(JSON.parse);
 
-    const waitForEmptyLimiter = ((limiter, done) => {
-        new Promise((resolve) => {
-            limiter.on("empty", () => {
-                console.log("Rate limiter is empty.");
-                done()
-                resolve();
-            });
-        })
-    });
+const waitForEmptyLimiter = ((limiter, done) => {
+    new Promise((resolve) => {
+        limiter.on("empty", () => {
+            console.log("Rate limiter is empty.");
+            done()
+            resolve();
+        });
+    })
+});
 
 
 const onboardingQueue = new Queue('onboarding-queue', {
@@ -67,23 +67,19 @@ onboardingQueue.process('onboarding', async (job, done) => {
         console.log(`Rest of emails loaded with this filter: ${filter}`);
 
         // await the completion of loadMailToDB
-        await onboardingRateLimiter.schedule(() => { return loadMailToDB(gmailApi, filter, userId, emailAddress) })
-            .then(async () => {
-                const updatedUser = await User.findById(userId)
-                let sortedMail = await newToOldMailSort(updatedUser.emails)
-                //sortedMail = removeDuplicates(sortedMail)
+        await loadMailToDB(gmailApi, filter, userId, emailAddress)
 
-                await User.findByIdAndUpdate(userId, {
-                    latestEmail: sortedMail[0].sentDate,
-                    emails: sortedMail,
-                })
-            })
-            .catch((error) => {
-                console.log(`Hello there's an error: ${error}`)
-            })
+        const updatedUser = await User.findById(userId)
+        const sortedMail = await newToOldMailSort(updatedUser.emails)
+        await User.findByIdAndUpdate(userId, {
+            latestEmail: sortedMail[0].sentDate,
+            emails: sortedMail,
+        })
+
         waitForEmptyLimiter(onboardingRateLimiter, done)
     } catch (error) {
         // Job failed, pass the error to done callback
+        console.log(`Error here ${error}`)
         done(error);
     }
 });
