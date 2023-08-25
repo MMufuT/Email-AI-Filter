@@ -58,4 +58,12 @@
     margin-bottom: 50px;
   }
 
+  .filter-icon {
+    width: auto;
+    max-height: 38px;
+    margin-left: 5px;
+    margin-top:-10px;
+    color: #7f1e1e80
+  }
+
   
