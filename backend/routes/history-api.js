@@ -16,12 +16,16 @@ historyRouter.get('/', authCheck, (req, res) => {
 });
 
 historyRouter.get('/:id', async (req, res) => {
+    // this screen will display the search results from this history object 
+
     History.findOne({ _id: req.historyId, userId: req.user.emailAddress})
     .then((history) => {
-        res.json({ searchHistory: history })
+        res.status(200).json({ searchHistory: history })
     })
-    
-    //else error
+    .catch((e) => {
+        res.status(500).send('Something went wrong with the history retrieval')
+    })
+
 
     // res.redirect('/search?query=${selectedSearchId}');
 
@@ -32,17 +36,19 @@ historyRouter.delete('/', (req, res) => {
     .then((deleteResult) => {
         res.json({ mssg: `Number of history objects deleted: ${deleteResult.deletedCount}` })
     })
-    
-    //else error
+    .catch((e) => {
+        res.status(500).send('Something went wrong while trying to delete history')
+    })
 });
 
 historyRouter.delete('/:id', (req, res) => {
     History.findOneAndDelete({ _id: req.historyId, userId: req.user.emailAddress})
     .then(() => {
-        res.json({ mssg: `History ${req.historyId} has been deleted` })
+        res.status(200).json({ mssg: `History ${req.historyId} has been deleted` })
     })
-
-    //else error
+    .catch((e) => {
+        res.status(500).send('Something went wrong while trying to delete history')
+    })
 })
 
 

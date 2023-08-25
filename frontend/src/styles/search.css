@@ -1,0 +1,61 @@
+.magGlass-nav {
+    width: 45px;
+    height: 45px;
+  }
+
+  .magGlass-search-bar {
+    width: 50px;
+    height: 50px;
+    background-color: #2f3135;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-size: 50px 50px;
+    margin-left: -12px;
+    margin-top: -7px;
+    padding: 10px;
+  }
+  
+  /* background-color: #f07474; */
+  .navbar-bg {
+    background-color: #4a4949;
+  }
+
+  .search-bg {
+    background-color: #202124; /* Your desired background color */
+     /* Reset default body margin */
+  }
+
+  .form-control {
+    height: 50px;
+    border-radius: 20px;
+  }
+
+  .search-input {
+    background-color: #2f3135;
+    height: 50px;
+    border: none;
+    color: white;
+  }
+  
+  .search-input:focus {
+    background-color: #2f3135; /* Maintain background color on focus */
+    color: white; /* Maintain text color on focus */
+    box-shadow: none; /* Remove default focus outline */
+  }
+
+  .search-input::placeholder {
+    color: #ffffff80; /* Adjust the color and alpha value as needed */
+  }
+
+  .input-group {
+    padding-left: 12px; /* Adjust padding to control button's position within the input group */
+  }
+
+  .logo-image {
+    max-width: 250px; /* Adjust the maximum width of the logo */
+    height: auto; /* Maintain aspect ratio */
+    margin-left: 346px;
+    margin-bottom: 50px;
+  }
+
+  

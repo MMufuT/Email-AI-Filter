@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './views/Home.js';
 import OnboardingLoading from './views/Onboarding-Loading'
 import OnboardingForm from './views/Onboarding-Form'
+import Search from './views/Search'
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/onboarding/loading" element={<OnboardingLoading />} />
         <Route path="/onboarding/form" element={<OnboardingForm />} />
+        <Route path="/search" element={<Search />} />
         {/* <Route path="/auth/google" element={<Login />} /> */}
       </Routes> 
       
