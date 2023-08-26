@@ -82,7 +82,7 @@ function App() {
         <Route path="/onboarding/loading" element={<OnboardingLoading />} />
         <Route path="/onboarding/form" element={<OnboardingForm />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/search/results" component={SearchResults} />
+        <Route path="/search/results" element={<SearchResults />} />
         {/* <Route path="/auth/google" element={<Login />} /> */}
       </Routes> 
       

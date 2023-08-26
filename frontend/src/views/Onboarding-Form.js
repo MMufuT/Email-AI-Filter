@@ -83,7 +83,7 @@ const OnboardingForm = () => {
     return (
         <div className="login-area d-flex align-items-center justify-content-center">
             <div className="row justify-content-center">
-                <div className="col-sm-8 my-5">
+                <div className="col-sm-8 my-2">
                     <div className="card">
                         <div className="card-body">
                             <h3 className="card-title">Select Your Preferences</h3>

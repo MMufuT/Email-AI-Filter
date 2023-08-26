@@ -90,6 +90,13 @@ const getSearchResults = async (userEmail, query, senderEmailAddress, range) => 
             lte: range.before ? range.before : currentUnixTime,
             gte: range.after ? range.after : 0
           }
+        },
+        {
+          key: 'sentDate',
+          range: {
+            lte: range.before ? range.before : currentUnixTime,
+            gte: range.after ? range.after : 0
+          }
         }
       ]
     } : {

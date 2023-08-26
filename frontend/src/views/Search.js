@@ -8,32 +8,58 @@ import aiLogo from '../ai-logo.png'
 import filterIcon from '../filter-icon.png'
 import '../styles/search.css';
 import { useNavigate } from 'react-router-dom';
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 
 const Search = () => {
-    const navbarRef = useRef(null); // Ref to the Navbar row element
     const searchInput = useRef(null);
-    const blankRowRef = useRef(null); // Ref to the blank row element
-    const searchRowRef = useRef(null)
-    const [combinedRowHeight, setCombinedRowHeight] = useState(0);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (navbarRef.current && blankRowRef.current && searchRowRef.current) {
-            const totalHeight = navbarRef.current.clientHeight + blankRowRef.current.clientHeight + searchRowRef.current.clientHeight;
-            setCombinedRowHeight(totalHeight);
-        }
-    }, []);
+    const [showFilterForm, setShowFilterForm] = useState(false);
+
+    const [selectedSender, setSelectedSender] = useState('');
+    const [selectedBeforeDate, setSelectedBeforeDate] = useState('');
+    const [selectedAfterDate, setSelectedAfterDate] = useState('');
+
+    const [tempSelectedSender, setTempSelectedSender] = useState('');
+    const [tempSelectedBeforeDate, setTempSelectedBeforeDate] = useState('');
+    const [tempSelectedAfterDate, setTempSelectedAfterDate] = useState('');
+
+    const toggleFilterForm = (sender, beforeDate, afterDate) => {
+        setTempSelectedSender(sender)
+        setTempSelectedBeforeDate(beforeDate)
+        setTempSelectedAfterDate(afterDate)
+        setShowFilterForm(!showFilterForm);
+    };
+
+    const applyFilters = () => {
+        // Construct your API call with selectedSender, selectedBeforeDate, and selectedAfterDate
+        // Hide the form after applying filters
+        setShowFilterForm(false);
+        // Trigger your API call
+    };
+
+    const applyFilterss = (sender, beforeDate, afterDate) => {
+        setSelectedSender(sender)
+        setSelectedBeforeDate(beforeDate)
+        setSelectedAfterDate(afterDate)
+        setShowFilterForm(false);
+    }
+
 
     const handleSearch = () => {
         const query = searchInput.current.value.trim()
+        const sender = selectedSender;
+        const before = selectedBeforeDate
+        const after = selectedAfterDate
         //const senderAddress = document.getElementById('sender-input').value.trim() //add to filter button
         //const range = { before: 'unixTimestamp', after: 'unixTimestamp' } //add to filter button
 
         if (!query) return
 
-        navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent('hello')}&before=${'hello'}&after=${'hello'}`);
+        navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`);
 
     };
 
@@ -59,8 +85,8 @@ const Search = () => {
     };
 
     return (
-        <div className="container-fluid" >
-            <div className="row" ref={navbarRef}  >
+        <div className="container-fluid vh-100 search-bg" >
+            <div className="row" >
                 <Navbar className="navbar-bg custom-mb-5" data-bs-theme="dark" >
                     <Navbar.Brand className="col-5 mx-3">
                         <img src={magGlass} alt="magGlass" className="magGlass-nav ms-5 me-2" />
@@ -74,17 +100,12 @@ const Search = () => {
                 </Navbar>
             </div>
 
-            <div className="row" ref={blankRowRef}>
+            <div className="row">
                 <div className="col" style={{ backgroundColor: '#202124', minHeight: '100px' }}></div>
             </div>
 
 
-            <div
-                className="row justify-content-center search-bg"
-                ref={searchRowRef}
-            // style={{ minHeight: `calc(100vh - ${combinedRowHeight}px)` }}
-            // add this element to combined row height in next row
-            >
+            <div className="row justify-content-center search-bg">
                 <div className="col-md-6 mt-5"  >
                     <img src={aiLogo} alt="Logo" className="logo-image" />
                     <div className="input-group">
@@ -98,19 +119,90 @@ const Search = () => {
                             onKeyDown={handleKeyPress}
                         />
                         <button className="btn" type="button" onClick={handleSearch}>
-                            <img src={magGlass} alt="Button" className="magGlass-search-bar" alignSelf="center" />
+                            <img src={magGlass} alt="Button" className="magGlass-search-bar"/>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="row justify-content-center search-bg" style={{ minHeight: `calc(100vh - ${combinedRowHeight}px)`}} >
+            <div className="row justify-content-center search-bg" >
 
-                <div className="col-md-6 " style={{ outline: "0px solid red" }} >
-                    <button className="btn" type="button">
+                <div className="col-md-6">
+                    <button className="btn" type="button"
+                        onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
+                    >
                         <img src={filterIcon} alt="filter icon" className="filter-icon " />
                     </button>
                 </div>
+
+                {showFilterForm && (
+                    <div className="modal popup-below" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Filter Options</h5>
+                                    <button type="button" className="close"
+                                        onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
+                                    >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="sender" className="form-label">Sender Email Address:</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="sender"
+                                                value={tempSelectedSender}
+                                                onChange={e => setTempSelectedSender(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-6">
+                                                <div className="mb-3">
+                                                    <label htmlFor="beforeDate" className="form-label">Sent Before:</label>
+                                                    <DatePicker
+                                                        selected={tempSelectedBeforeDate}
+                                                        onChange={date => setTempSelectedBeforeDate(date)}
+                                                        className="form-control"
+                                                        id="beforeDate"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6">
+                                                <div className="mb-3">
+                                                    <label htmlFor="afterDate" className="form-label">Sent After: </label>
+                                                    <DatePicker
+                                                        selected={tempSelectedAfterDate}
+                                                        onChange={date => setTempSelectedAfterDate(date)}
+                                                        className="form-control"
+                                                        id="afterDate"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* Add date pickers for before and after dates */}
+                                    </form>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary"
+                                        onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
+                                    >Cancel
+                                    </button>
+                                    <button type="button" className="btn btn-primary"
+                                        onClick={() => applyFilterss(
+                                            tempSelectedSender,
+                                            tempSelectedBeforeDate,
+                                            tempSelectedAfterDate)}
+                                    > Apply Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
 
             </div>
