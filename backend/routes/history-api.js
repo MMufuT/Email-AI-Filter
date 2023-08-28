@@ -6,7 +6,7 @@ const authCheck = require('../auth/auth-check');
 historyRouter.use(authCheck)
 
 // GET user's search history
-historyRouter.get('/', authCheck, (req, res) => {
+historyRouter.get('/', (req, res) => {
     History.find({ userId: req.user.id})
     .then((history) => {
         res.json({ searchHistory: history })
@@ -32,7 +32,7 @@ historyRouter.get('/:id', async (req, res) => {
 });
 
 historyRouter.delete('/', (req, res) => {
-    History.deleteMany({ userId: req.user.id})
+    History.deleteMany({ userId: req.user.id })
     .then((deleteResult) => {
         res.json({ mssg: `Number of history objects deleted: ${deleteResult.deletedCount}` })
     })

@@ -4,8 +4,8 @@ import 'bootstrap/dist/js/bootstrap.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/onboarding.css';
-import categoryExample from '../categoryExample.jpg';
-import UserIdExample from '../UserID Example.jpg';
+import categoryExample from '../images/categoryExample.jpg';
+import UserIdExample from '../images/UserID Example.jpg';
 
 const OnboardingForm = () => {
     const navigate = useNavigate();
@@ -55,28 +55,33 @@ const OnboardingForm = () => {
 
     // Auth check using useEffect
     useEffect(() => {
-        console.log('use effect entered')
-        axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
-            .then((response) => {
-                // If user is authorized (logged in), no action needed
-            })
-            .catch((error) => {
-                if (error.response && error.response.status === 401) {
-                    // If user is unauthorized (not logged in), redirect to Google OAuth login
-                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
-                }
-            });
+        const checkStatus = (async () => {
+            console.log('use effect entered')
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+                .then((response) => {
+                    // If user is authorized (logged in), no action needed
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                        // If user is unauthorized (not logged in), redirect to Google OAuth login
+                        window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                    }
+                });
 
-        axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
-            .then((response) => {
-                if (response.data.onboarded) {
-                    // redirects if user is already onboarded
-                    navigate('/search')
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
+                .then((response) => {
+                    if (response.data.onboarded) {
+                        // redirects if user is already onboarded
+                        navigate('/search')
+                    }
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        })
+
+        checkStatus()
+
     }, []);
 
 

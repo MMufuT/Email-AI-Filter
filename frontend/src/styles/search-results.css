@@ -1,0 +1,24 @@
+.results-logo-image {
+    max-width: 75px;
+    /* Adjust the maximum width of the logo */
+    height: auto;
+    /* Maintain aspect ratio */
+    margin-left: 0%;
+    margin-bottom: 0%;
+  }
+
+  .results-filter-icon {
+    width: auto;
+    max-height: 38px;
+    margin-left: 300%;
+    margin-top: -40%;
+    color: #7f1e1e80
+  }
+
+  .results-filter-popup {
+    margin-top: 9%;
+    margin-left: 12%;
+    width: 19%; /* Make the width 100% */
+  }
+
+  

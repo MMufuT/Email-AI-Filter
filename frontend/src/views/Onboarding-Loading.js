@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import magGlass from '../smartfilter128.png';
 import { useNavigate } from 'react-router-dom';
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader'
 import axios from 'axios';
@@ -12,23 +11,9 @@ const OnboardingLoading = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        setLoading(true);
-        // setTimeout(() => {
-        //     console.log('use effect entered')
-        //     axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding`, { withCredentials: true })
-        //         .then(response => {
-        //             setLoading(false);
-        //             navigate('/search')
-        //         })
-        //         .catch(error => {
-        //             console.log(error);
-        //             setLoading(false);
-        //         })
-
-        // }, 10000000000000)
         console.log('use effect entered')
-
-        axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+        const checkStatus = (async() => {
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
             .then((response) => {
                 console.log('User is authorized')
                 // If user is authorized (logged in), no action needed
@@ -39,27 +24,35 @@ const OnboardingLoading = () => {
                     window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
                 }
             });
-
-        axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
-            .then(response => {
-                //if user has filled out the form and isn't onboared yet, continue onboarding
-                setLoading(false);
-                navigate('/search')
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 428) {
-                    // If user hasn't filled out the form, redirect to form
-                    setLoading(false)
-                    console.log('User needs to fill out form before onbaording')
-                    navigate('/onboarding/form');
-                } else if (error.response && error.response.status === 409) {
-                    // If user is already onboarded, redirect to search
+    
+            setLoading(true);
+            
+            axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
+                .then(response => {
+                    //if user has filled out the form and isn't onboared yet, continue onboarding
                     setLoading(false);
-                    navigate('/search');
-                    console.log('User is already onboarded');
-                }
-                setLoading(false);
-            })
+                    navigate('/search')
+                })
+                .catch(error => {
+                    if (error.response && error.response.status === 428) {
+                        // If user hasn't filled out the form, redirect to form
+                        setLoading(false)
+                        console.log('User needs to fill out form before onbaording')
+                        navigate('/onboarding/form');
+                    } else if (error.response && error.response.status === 409) {
+                        // If user is already onboarded, redirect to search
+                        setLoading(false);
+                        navigate('/search');
+                        console.log('User is already onboarded');
+                    }
+                    setLoading(false);
+                });
+        })
+
+        checkStatus()
+       
+        
+       
 
     }, [])
 
@@ -97,9 +90,6 @@ const OnboardingLoading = () => {
 
                         </div>
                     </div>
-
-
-
                 </div>
             ) : (
                 //if no longer loading, redirect to /search route on frontend.

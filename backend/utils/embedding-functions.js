@@ -20,7 +20,7 @@ const createEmbedding = async (input) => {
   })
     .then((response) => { return response.data.data[0].embedding })
     .catch((error) => {
-      console.error('Error occured while creating Open AI embedding: ' + error)
+      console.log('Error occured while creating Open AI embedding: ' + error)
     })
 }
 

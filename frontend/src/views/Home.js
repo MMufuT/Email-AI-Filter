@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import magGlass from '../smartfilter128.png';
+import magGlass from '../images/smartfilter128.png';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 const Home = () => {

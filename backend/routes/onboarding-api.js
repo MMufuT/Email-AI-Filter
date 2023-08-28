@@ -13,6 +13,7 @@ const authCheck = require('../auth/auth-check');
 const { onboardingQueue } = require('../utils/queue');
 const { qdrantLock } = require('../utils/mutex')
 
+
 // const qdrant = new QdrantClient({
 //     url: process.env.QDRANT_URL,
 //     apiKey: process.env.QDRANT_API_KEY,

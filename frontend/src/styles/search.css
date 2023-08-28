@@ -15,15 +15,12 @@
   padding: 10px;
 }
 
-/* background-color: #f07474; */
 .navbar-bg {
   background-color: #4a4949;
 }
 
 .search-bg {
   background-color: #202124;
-  /* Your desired background color */
-  /* Reset default body margin */
 }
 
 .form-control {
@@ -58,7 +55,7 @@
   /* Adjust padding to control button's position within the input group */
 }
 
-.logo-image {
+.search-logo-image {
   max-width: 250px;
   /* Adjust the maximum width of the logo */
   height: auto;
@@ -67,7 +64,7 @@
   margin-bottom: 5.4%;
 }
 
-.filter-icon {
+.search-filter-icon {
   width: auto;
   max-height: 38px;
   margin-left: 5px;
@@ -75,8 +72,8 @@
   color: #7f1e1e80
 }
 
-.popup-below {
-  margin-top: 3%;
+.search-filter-popup {
+  margin-top: 4%;
   margin-left: 3%;
   width: 19%; /* Make the width 100% */
 }

@@ -1,7 +1,6 @@
 require('dotenv').config();
 const { google } = require('googleapis');
 const { Configuration, OpenAIApi } = require('openai')
-const bluePrint = require('./instructions')
 // const Bottleneck = require('bottleneck');
 const User = require('../models/userSchema');
 const { addEmailtoQdrant } = require('./embedding-functions')

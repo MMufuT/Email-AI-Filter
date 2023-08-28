@@ -3,19 +3,19 @@ import 'bootstrap/dist/js/bootstrap.js';
 import React, { Navigate, useRef, useEffect, useState } from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import axios from 'axios'
-import magGlass from '../smartfilter128.png';
-import aiLogo from '../ai-logo.png'
-import filterIcon from '../filter-icon.png'
+import magGlass from '../images/smartfilter128.png';
+import aiLogo from '../images/ai-logo.png'
+import filterIcon from '../images/filter-icon.png'
 import '../styles/search.css';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
-
+import handleSearch from '../functions/handle-search'
 
 
 const Search = () => {
-    const searchInput = useRef(null);
     const navigate = useNavigate();
+    const searchInput = useRef(null);
 
     const [showFilterForm, setShowFilterForm] = useState(false);
 
@@ -34,59 +34,56 @@ const Search = () => {
         setShowFilterForm(!showFilterForm);
     };
 
-    const applyFilters = () => {
-        // Construct your API call with selectedSender, selectedBeforeDate, and selectedAfterDate
-        // Hide the form after applying filters
-        setShowFilterForm(false);
-        // Trigger your API call
-    };
-
-    const applyFilterss = (sender, beforeDate, afterDate) => {
+    const applyFilters = (sender, beforeDate, afterDate) => {
         setSelectedSender(sender)
         setSelectedBeforeDate(beforeDate)
         setSelectedAfterDate(afterDate)
         setShowFilterForm(false);
     }
 
-
-    const handleSearch = () => {
-        const query = searchInput.current.value.trim()
-        const sender = selectedSender;
-        const before = selectedBeforeDate
-        const after = selectedAfterDate
-        //const senderAddress = document.getElementById('sender-input').value.trim() //add to filter button
-        //const range = { before: 'unixTimestamp', after: 'unixTimestamp' } //add to filter button
-
-        if (!query) return
-
-        navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`);
-
-    };
-
-
-    // put this inside of searchResults component before api call is made
-
-    // const searchParams =
-    // {
-    //     query: document.getElementById('search-input').value,
-    //     senderAddress: document.getElementById('sender-input').value,
-    //     range: {
-    //         before: unixTimestamp,
-    //         after: unixTimestamp
-    //     }
-    //     OR
-    //     range: range
-    // }
-
     const handleKeyPress = event => {
         if (event.key === 'Enter') {
-            handleSearch();
+            handleSearch(
+                navigate,
+                searchInput.current.value.trim(),
+                selectedSender,
+                selectedBeforeDate,
+                selectedAfterDate
+            );
         }
     };
 
+    useEffect(() => {
+        const checkStatus = (async () => {
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+                .then((response) => {
+                    // If user is authorized (logged in), no action needed
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                        // If user is unauthorized (not logged in), redirect to Google OAuth login
+                        window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                    }
+                });
+
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
+                .then((response) => {
+                    if (!response.data.onboarded) {
+                        // redirects if user is already onboarded
+                        navigate('/onboarding/form')
+                    }
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        })
+
+        checkStatus()
+    })
+
     return (
         <div className="container-fluid vh-100 search-bg" >
-            <div className="row" >
+            <div className="row">
                 <Navbar className="navbar-bg custom-mb-5" data-bs-theme="dark" >
                     <Navbar.Brand className="col-5 mx-3">
                         <img src={magGlass} alt="magGlass" className="magGlass-nav ms-5 me-2" />
@@ -107,7 +104,7 @@ const Search = () => {
 
             <div className="row justify-content-center search-bg">
                 <div className="col-md-6 mt-5"  >
-                    <img src={aiLogo} alt="Logo" className="logo-image" />
+                    <img src={aiLogo} alt="Logo" className="search-logo-image" />
                     <div className="input-group">
                         <input
                             type="text"
@@ -118,8 +115,15 @@ const Search = () => {
                             aria-describedby="search-button"
                             onKeyDown={handleKeyPress}
                         />
-                        <button className="btn" type="button" onClick={handleSearch}>
-                            <img src={magGlass} alt="Button" className="magGlass-search-bar"/>
+                        <button className="btn" type="button"
+                            onClick={() => handleSearch(
+                                navigate,
+                                searchInput.current.value.trim(),
+                                selectedSender,
+                                selectedBeforeDate,
+                                selectedAfterDate)}
+                        >
+                            <img src={magGlass} alt="Button" className="magGlass-search-bar" />
                         </button>
                     </div>
                 </div>
@@ -131,12 +135,12 @@ const Search = () => {
                     <button className="btn" type="button"
                         onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
                     >
-                        <img src={filterIcon} alt="filter icon" className="filter-icon " />
+                        <img src={filterIcon} alt="filter icon" className="search-filter-icon " />
                     </button>
                 </div>
 
                 {showFilterForm && (
-                    <div className="modal popup-below" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
+                    <div className="modal search-filter-popup" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -162,6 +166,17 @@ const Search = () => {
                                         <div className="row">
                                             <div className="col-sm-6">
                                                 <div className="mb-3">
+                                                    <label htmlFor="afterDate" className="form-label">Sent After:</label>
+                                                    <DatePicker
+                                                        selected={tempSelectedAfterDate}
+                                                        onChange={date => setTempSelectedAfterDate(date)}
+                                                        className="form-control"
+                                                        id="afterDate"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6">
+                                                <div className="mb-3">
                                                     <label htmlFor="beforeDate" className="form-label">Sent Before:</label>
                                                     <DatePicker
                                                         selected={tempSelectedBeforeDate}
@@ -171,17 +186,7 @@ const Search = () => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="col-sm-6">
-                                                <div className="mb-3">
-                                                    <label htmlFor="afterDate" className="form-label">Sent After: </label>
-                                                    <DatePicker
-                                                        selected={tempSelectedAfterDate}
-                                                        onChange={date => setTempSelectedAfterDate(date)}
-                                                        className="form-control"
-                                                        id="afterDate"
-                                                    />
-                                                </div>
-                                            </div>
+
                                         </div>
                                         {/* Add date pickers for before and after dates */}
                                     </form>
@@ -192,7 +197,7 @@ const Search = () => {
                                     >Cancel
                                     </button>
                                     <button type="button" className="btn btn-primary"
-                                        onClick={() => applyFilterss(
+                                        onClick={() => applyFilters(
                                             tempSelectedSender,
                                             tempSelectedBeforeDate,
                                             tempSelectedAfterDate)}

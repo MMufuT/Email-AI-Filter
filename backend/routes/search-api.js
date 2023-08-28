@@ -11,8 +11,6 @@ const getOAuthClient = require('../utils/get-oauth')
 const { getSearchResults } = require('../utils/embedding-functions')
 
 
-
-
 searchRouter.use(authCheck)
 
 searchRouter.post('/', async (req, res) => {
@@ -22,8 +20,7 @@ searchRouter.post('/', async (req, res) => {
     const query = searchConfig.query
     const range = searchConfig.range
     const { emailAddress, emails, gmailLinkId } = user
-    // const results = await getSearchResults(emailAddress, query, `service@paypal.com`, range)
-    const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range)
+    const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range) 
     const searchResults = rawSearchResults.map((data) => {
         const email = emails.find(email => email.gmailId === data.payload.gmailId)
         return {
