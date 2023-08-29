@@ -69,14 +69,14 @@ const OnboardingLoading = () => {
             </div>
 
             {loading ? (
-                <div class="container vh-100" style={{ border: '0px solid blue' }}>
-                    <div class="row d-flex h-100 justify-content-center align-content-center" style={{ border: '0px solid red' }}>
-                        <div class="justify-content-center align-items-end d-flex h-25" style={{ border: '0px solid green' }}>
+                <div className="container vh-100" style={{ border: '0px solid blue' }}>
+                    <div className="row d-flex h-100 justify-content-center align-content-center" style={{ border: '0px solid red' }}>
+                        <div className="justify-content-center align-items-end d-flex h-25" style={{ border: '0px solid green' }}>
                             <ClimbingBoxLoader size={40} color='white' loading={loading} />
                         </div>
 
-                        <div class="row d-flex align-items-center h-25" style={{ border: '0px solid red' }}>
-                            <div class="justify-content-center d-flex flex-column text-center">
+                        <div className="row d-flex align-items-center h-25" style={{ border: '0px solid red' }}>
+                            <div className="justify-content-center d-flex flex-column text-center">
                                 <h1 className="loading-text" style={{ fontFamily: 'Nunito, sans-serif', fontStyle: 'italic', color: 'white' }}>
                                     Loading Your Personal Gmail Database
                                     <span>.</span>

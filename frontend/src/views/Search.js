@@ -89,7 +89,7 @@ const Search = () => {
                         <img src={magGlass} alt="magGlass" className="magGlass-nav ms-5 me-2" />
                         Gmail AI SmartFilter
                     </Navbar.Brand>
-                    <Nav className="me-auto ms-4" >
+                    <Nav className="me-auto ms-2" >
                         <Nav.Link href="/history">History</Nav.Link>
                         <Nav.Link href="/search">Search</Nav.Link>
                         <Nav.Link href="/account">Account</Nav.Link>

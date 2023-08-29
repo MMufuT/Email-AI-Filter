@@ -38,7 +38,7 @@ searchRouter.post('/', async (req, res) => {
         results: searchResults
     })
 
-    res.json({ email: emailAddress, results: searchResults })
+    res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
 });
 
 

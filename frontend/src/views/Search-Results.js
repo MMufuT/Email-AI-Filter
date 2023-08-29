@@ -18,6 +18,9 @@ import '../styles/search-results.css'
 const SearchResults = () => {
   const searchInput = useRef(null);
   const navigate = useNavigate()
+  const location = useLocation();
+  const tempParam = new URLSearchParams(location.search)
+  const pageQuery = tempParam.get('query')
 
   const [showFilterForm, setShowFilterForm] = useState(false);
 
@@ -44,17 +47,8 @@ const SearchResults = () => {
   }
 
   const [results, setResults] = useState([]);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
 
-  const searchConfig = {
-    query: searchParams.get('query'),
-    senderAddress: searchParams.get('sender'), // or specify an email address
-    range: {
-      before: convertStringToUnixTimestamp(searchParams.get('before')),
-      after: convertStringToUnixTimestamp(searchParams.get('after'))
-    }
-  };
+
 
   const handleKeyPress = event => {
     if (event.key === 'Enter') {
@@ -88,8 +82,21 @@ const SearchResults = () => {
             // redirects if user is already onboarded
             navigate('/onboarding/form')
           } else {
+
+            const searchParams = new URLSearchParams(location.search);
+
+            const searchConfig = {
+              query: searchParams.get('query'),
+              senderAddress: searchParams.get('sender'), // or specify an email address
+              range: {
+                before: convertStringToUnixTimestamp(searchParams.get('before')),
+                after: convertStringToUnixTimestamp(searchParams.get('after'))
+              }
+            };
+
             axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, searchConfig, { withCredentials: true })
               .then((response) => {
+                setResults(response.data.results)
                 console.log(response)
               })
               .catch((error) => {
@@ -105,7 +112,7 @@ const SearchResults = () => {
 
 
     checkStatus()
-  }, []);
+  }, [location.search]);
 
   return (
     <div className="container-fluid search-bg">
@@ -116,7 +123,7 @@ const SearchResults = () => {
             <img src={magGlass} alt="magGlass" className="magGlass-nav ms-5 me-2" />
             Gmail AI SmartFilter
           </Navbar.Brand>
-          <Nav className="me-auto ms-4" >
+          <Nav className="me-auto ms-2" >
             <Nav.Link href="/history">History</Nav.Link>
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/account">Account</Nav.Link>
@@ -125,6 +132,7 @@ const SearchResults = () => {
       </div>
 
       <div className="row justify-content-start search-bg" >
+
         <div className="col-md-6 mt-4 ms-3 d-flex align-items-center"  >
           <img src={aiLogo} alt="Logo" className="results-logo-image me-3" style={{ outline: "0px solid green" }} />
           <div className="input-group" style={{ outline: "0px solid red" }} >
@@ -135,7 +143,7 @@ const SearchResults = () => {
               placeholder="Search Gmail"
               aria-label="Search Gmail"
               aria-describedby="search-button"
-              defaultValue={searchConfig.query}
+              defaultValue={pageQuery}
               onKeyDown={handleKeyPress}
             />
             <button className="btn" type="button"
@@ -152,9 +160,10 @@ const SearchResults = () => {
             </button>
           </div>
         </div>
+
         <div className="row justify-content-start search-bg" >
 
-          <div className="col-md-2 " style={{ outline: '0px solid red' }}>
+          <div className="col-md-2 mb-2 " style={{ outline: '0px solid red' }}>
             <button className="btn" type="button"
               onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
             >
@@ -211,7 +220,6 @@ const SearchResults = () => {
                         </div>
 
                       </div>
-                      {/* Add date pickers for before and after dates */}
                     </form>
                   </div>
                   <div className="modal-footer">
@@ -232,9 +240,35 @@ const SearchResults = () => {
             </div>
           )}
 
+          <div className="row justify-content-start search-bg">
+            <div className="col-md-6">
+
+                <text className="results-results-filter">Parameters:</text>
+                <text className="results-results-filter">Parameters:</text>
+                <text className="results-results-filter">Parameters:</text>
+                <text className="results-results-filter">Parameters:</text>
+
+              {/* Loop through search results */}
+              {results.map((results, index) => (
+                <div
+                  key={index}
+                  className="search-result-item"
+                  style={{ color: 'white' }}
+                  onClick={() => window.open(results.emailLink, '_blank')}
+                >
+                  <h4>{results.subject}</h4>
+                  <p>{results.sender}</p>
+                  {/* You can add more properties from your JSON data here */}
+                </div>
+              ))}
+            </div>
+          </div>
+
 
         </div>
       </div>
+
+
     </div>
   );
 
