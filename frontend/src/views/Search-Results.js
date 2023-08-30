@@ -24,6 +24,7 @@ const SearchResults = () => {
 
   const [showFilterForm, setShowFilterForm] = useState(false);
 
+
   const [selectedSender, setSelectedSender] = useState('');
   const [selectedBeforeDate, setSelectedBeforeDate] = useState('');
   const [selectedAfterDate, setSelectedAfterDate] = useState('');
@@ -47,6 +48,7 @@ const SearchResults = () => {
   }
 
   const [results, setResults] = useState([]);
+  const [searchConfig, setSearchConfig] = useState({});
 
 
 
@@ -59,6 +61,9 @@ const SearchResults = () => {
         selectedBeforeDate,
         selectedAfterDate
       )
+      setTempSelectedSender('');
+      setTempSelectedBeforeDate('');
+      setTempSelectedAfterDate('');
     }
   };
 
@@ -97,6 +102,7 @@ const SearchResults = () => {
             axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, searchConfig, { withCredentials: true })
               .then((response) => {
                 setResults(response.data.results)
+                setSearchConfig(response.data.searchConfig)
                 console.log(response)
               })
               .catch((error) => {
@@ -112,7 +118,7 @@ const SearchResults = () => {
 
 
     checkStatus()
-  }, [location.search]);
+  }, [location.search, navigate]);
 
   return (
     <div className="container-fluid search-bg">
@@ -147,14 +153,17 @@ const SearchResults = () => {
               onKeyDown={handleKeyPress}
             />
             <button className="btn" type="button"
-              onClick={() =>
+              onClick={() => {
                 handleSearch(
                   navigate,
                   searchInput.current.value.trim(),
                   selectedSender,
                   selectedBeforeDate,
                   selectedAfterDate
-                )}
+                )
+                setTempSelectedSender('');
+                setTempSelectedBeforeDate('');
+                setTempSelectedAfterDate('');}}
             >
               <img src={magGlass} alt="Button" className="magGlass-search-bar" />
             </button>
@@ -163,7 +172,7 @@ const SearchResults = () => {
 
         <div className="row justify-content-start search-bg" >
 
-          <div className="col-md-2 mb-2 " style={{ outline: '0px solid red' }}>
+          <div className="col-md-2" style={{ outline: '0px solid red' }}>
             <button className="btn" type="button"
               onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
             >
@@ -243,10 +252,31 @@ const SearchResults = () => {
           <div className="row justify-content-start search-bg">
             <div className="col-md-6">
 
-                <text className="results-results-filter">Parameters:</text>
-                <text className="results-results-filter">Parameters:</text>
-                <text className="results-results-filter">Parameters:</text>
-                <text className="results-results-filter">Parameters:</text>
+
+              <div>
+                {searchConfig.query && (
+                  <>
+                    <span className="results-results-filter"><em>Query: {searchConfig.query}</em></span><br />
+                  </>
+                )}
+                {searchConfig.senderAddress && (
+                  <>
+                    <span className="results-results-filter"><em>Sender: {searchConfig.senderAddress}</em></span><br />
+                  </>
+                )}
+                {searchConfig.range && searchConfig.range.after && (
+                  <>
+                    <span className="results-results-filter"><em>After: {searchConfig.range.after}</em></span><br />
+                  </>
+                )}
+                {searchConfig.range && searchConfig.range.before && (
+                  <>
+                    <span className="results-results-filter"><em>Before: {searchConfig.range.before}</em></span><br />
+                  </>
+                )}
+              </div>
+
+
 
               {/* Loop through search results */}
               {results.map((results, index) => (

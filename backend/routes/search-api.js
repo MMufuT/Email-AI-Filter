@@ -9,6 +9,7 @@ const { google } = require('googleapis');
 const { getGmailApiClient, loadMailToDB, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
 const getOAuthClient = require('../utils/get-oauth')
 const { getSearchResults } = require('../utils/embedding-functions')
+const { formatDate } = require('../utils/unix-to-string')
 
 
 searchRouter.use(authCheck)
@@ -20,7 +21,7 @@ searchRouter.post('/', async (req, res) => {
     const query = searchConfig.query
     const range = searchConfig.range
     const { emailAddress, emails, gmailLinkId } = user
-    const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range) 
+    const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range)
     const searchResults = rawSearchResults.map((data) => {
         const email = emails.find(email => email.gmailId === data.payload.gmailId)
         return {
@@ -37,6 +38,14 @@ searchRouter.post('/', async (req, res) => {
         query: query,
         results: searchResults
     })
+
+    if (searchConfig.range.after) {
+        searchConfig.range.after = formatDate(searchConfig.range.after)
+    }
+    
+    if (searchConfig.range.before) {
+        searchConfig.range.before = formatDate(searchConfig.range.before)
+    }
 
     res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
 });
