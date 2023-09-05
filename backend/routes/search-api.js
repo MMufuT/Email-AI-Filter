@@ -32,17 +32,28 @@ searchRouter.post('/', async (req, res) => {
         }
     })
 
-    searchHistory.create({
+    const existingSearch = await searchHistory.findOne({
         userId: user.id,
         userEmailAddress: user.emailAddress,
         query: query,
-        results: searchResults
-    })
+        // Add additional conditions to check for sender and date range if needed
+    });
+
+    if (existingSearch) {
+        existingSearch.updatedAt = new Date()
+        await existingSearch.save()
+    } else {
+        searchHistory.create({
+            userId: user.id,
+            userEmailAddress: user.emailAddress,
+            query: query,
+        })
+    }
 
     if (searchConfig.range.after) {
         searchConfig.range.after = formatDate(searchConfig.range.after)
     }
-    
+
     if (searchConfig.range.before) {
         searchConfig.range.before = formatDate(searchConfig.range.before)
     }

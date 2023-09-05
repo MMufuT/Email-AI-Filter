@@ -15,6 +15,7 @@ import OnboardingLoading from './views/Onboarding-Loading'
 import OnboardingForm from './views/Onboarding-Form'
 import Search from './views/Search'
 import SearchResults from './views/Search-Results'
+import History from './views/History'
 
 
 function App() {
@@ -83,6 +84,7 @@ function App() {
         <Route path="/onboarding/form" element={<OnboardingForm />} />
         <Route path="/search" element={<Search />} />
         <Route path="/search/results" element={<SearchResults />} />
+        <Route path="/history" element={<History />} />
         {/* <Route path="/auth/google" element={<Login />} /> */}
       </Routes> 
       

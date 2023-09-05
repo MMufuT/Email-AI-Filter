@@ -23,7 +23,45 @@
 
   .results-results-filter {
     color:gray;
-    margin-left:20%
+    margin-left:14.5%
   }
+
+  .search-result-item {
+    margin-left:14.5%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid #4A4949;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    color: #333; /* Text color for the search result */
+  }
+
+  .results-sticky-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #202124; /* Change this to your desired background color */
+    box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for visual effect */
+    z-index: 1000; /* Adjust the z-index as needed to ensure it's on top of other content */
+  }
+  
+  .sender {
+    font-size: 13.5px;
+    color: #ffffff; /* Text color for the sender */
+    margin-bottom:1%;
+  }
+
+  .subject {
+    font-size: 16px;
+    color:#57abf6
+  }
+
+  .email-body {
+    margin-top:1%;
+    font-size: 15px;
+    color: #ffffff;
+  }
+
+  
 
   

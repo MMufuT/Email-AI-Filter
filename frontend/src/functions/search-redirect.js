@@ -4,9 +4,9 @@ search criteria
 */
 
 
-const handleSearch = (navigate, query, sender, before, after) => {
+const searchRedirect = (navigate, query, sender, before, after) => {
     if (!query) return
     navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`);
 };
 
-export default handleSearch
+export default searchRedirect

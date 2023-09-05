@@ -1,0 +1,37 @@
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding-left: 5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    border: 2px solid #4A4949;
+    border-radius: 40px;
+    box-shadow: 0px 2px 4px rgba(248, 247, 247, 0.1);
+    position: relative; /* Enable relative positioning for absolute child */
+}
+
+.history-content {
+    flex: 1;
+}
+
+.searched-query {
+    /* Style for the searched query text */
+}
+
+.searched-time {
+    /* Style for the searched time text */
+}
+
+.delete-one-button-container {
+    position: absolute;
+    top: 22px; /* Adjust the top spacing */
+    right: 20px; /* Adjust the right spacing */
+}
+
+.delete-one-button {
+    background: none;
+    border: none;
+    padding: 0;
+}

@@ -12,15 +12,6 @@ const historySchema = new mongoose.Schema({
     query: {
         type: String,
         required: true
-    },
-
-    results: {
-        type: [{
-            sender: String, 
-            subject: String,
-            body: String,
-            emailLink: String
-        }]
     }
     
 

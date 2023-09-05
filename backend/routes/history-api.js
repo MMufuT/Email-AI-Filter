@@ -7,7 +7,8 @@ historyRouter.use(authCheck)
 
 // GET user's search history
 historyRouter.get('/', (req, res) => {
-    History.find({ userId: req.user.id})
+    History.find({ userId: req.user.id })
+    .sort({ updatedAt: -1 })
     .then((history) => {
         res.json({ searchHistory: history })
     })
@@ -18,7 +19,7 @@ historyRouter.get('/', (req, res) => {
 historyRouter.get('/:id', async (req, res) => {
     // this screen will display the search results from this history object 
 
-    History.findOne({ _id: req.historyId, userId: req.user.emailAddress})
+    History.findOne({ _id: req.historyId, userId: req.user.id})
     .then((history) => {
         res.status(200).json({ searchHistory: history })
     })
@@ -42,9 +43,9 @@ historyRouter.delete('/', (req, res) => {
 });
 
 historyRouter.delete('/:id', (req, res) => {
-    History.findOneAndDelete({ _id: req.historyId, userId: req.user.emailAddress})
+    History.findOneAndDelete({ _id: req.params.id, userId: req.user.id})
     .then(() => {
-        res.status(200).json({ mssg: `History ${req.historyId} has been deleted` })
+        res.status(200).json({ mssg: `History ${req.params} has been deleted` })
     })
     .catch((e) => {
         res.status(500).send('Something went wrong while trying to delete history')
