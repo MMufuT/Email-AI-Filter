@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import axios from 'axios';
@@ -59,25 +59,30 @@ const OnboardingForm = () => {
             console.log('use effect entered')
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
                 .then((response) => {
-                    // If user is authorized (logged in), no action needed
+                    // If user is authorized (logged in and onboarded), redirect to search
+                    navigate('/search')
                 })
                 .catch((error) => {
-                    if (error.response && error.response.status === 401) {
+                    const errorMessage = error.response.data.mssg;
+                    if (errorMessage === "User is not onboarded") {
+                        // If user is not onboarded, navigate to the onboarding form
+                        navigate('/onboarding/form');
+                    } else {
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
                         window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
                     }
                 });
 
-            await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
-                .then((response) => {
-                    if (response.data.onboarded) {
-                        // redirects if user is already onboarded
-                        navigate('/search')
-                    }
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
+            // await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
+            //     .then((response) => {
+            //         if (response.data.onboarded) {
+            //             // redirects if user is already onboarded
+            //             navigate('/search')
+            //         }
+            //     })
+            //     .catch((error) => {
+            //         console.log(error)
+            //     })
         })
 
         checkStatus()

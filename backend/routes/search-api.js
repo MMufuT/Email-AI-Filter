@@ -16,6 +16,12 @@ searchRouter.use(authCheck)
 
 searchRouter.post('/', async (req, res) => {
     const user = req.user
+
+    // if (!user.isOnboarded) {
+    //     return res.status(401).json({ mssg: "not onboarded" })
+    // }
+
+
     const searchConfig = req.body
     const senderAddress = searchConfig.senderAddress
     const query = searchConfig.query

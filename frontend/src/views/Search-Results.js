@@ -3,17 +3,13 @@ import 'bootstrap/dist/js/bootstrap.js';
 import React, { useRef, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import magGlass from '../images/smartfilter128.png';
-import axios from 'axios'
-import { Nav, Navbar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import aiLogo from '../images/ai-logo.png'
 import filterIcon from '../images/filter-icon.png'
-import convertStringToUnixTimestamp from '../functions/string-to-unix';
 import searchRedirect from '../functions/search-redirect';
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/search-results.css'
-import CustomNavbar from '../components/Custom-Navbar';
+import CustomNavbar from '../components/Custom-Navbar'
 import searchCall from '../functions/search-call'
 import FilterModal from '../components/Filter-Modal';
 

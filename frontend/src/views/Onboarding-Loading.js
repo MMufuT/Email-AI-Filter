@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import { useNavigate } from 'react-router-dom';
@@ -12,21 +12,25 @@ const OnboardingLoading = () => {
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         console.log('use effect entered')
-        const checkStatus = (async() => {
+        const checkStatus = (async () => {
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
-            .then((response) => {
-                console.log('User is authorized')
-                // If user is authorized (logged in), no action needed
-            })
-            .catch((error) => {
-                if (error.response && error.response.status === 401) {
-                    // If user is unauthorized (not logged in), redirect to Google OAuth login
-                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
-                }
-            });
-    
+                .then((response) => {
+                    console.log('User is authorized')
+                    // If user is authorized (logged in), no action needed
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                        const errorMessage = error.response.data.mssg;
+
+                        // If user is unauthorized (not logged in), redirect to Google OAuth login
+                        if (errorMessage === "User is not logged in") {
+                            window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                        } else { /*do nothing*/}
+                    }
+                });
+
             setLoading(true);
-            
+
             axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
                 .then(response => {
                     //if user has filled out the form and isn't onboared yet, continue onboarding
@@ -50,9 +54,9 @@ const OnboardingLoading = () => {
         })
 
         checkStatus()
-       
-        
-       
+
+
+
 
     }, [])
 

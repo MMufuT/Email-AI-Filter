@@ -1,24 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import React, { useRef, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import magGlass from '../images/smartfilter128.png';
+import React, {useEffect, useState } from 'react';
 import axios from 'axios'
-import { Nav, Navbar } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import aiLogo from '../images/ai-logo.png'
-import filterIcon from '../images/filter-icon.png'
-import convertStringToUnixTimestamp from '../functions/string-to-unix';
-import searchRedirect from '../functions/search-redirect';
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/history.css'
 import CustomNavbar from '../components/Custom-Navbar';
 import xImg from '../images/x.png'
 import { deleteOneHistory, deleteAllHistory } from '../functions/delete-history';
+import { useNavigate } from 'react-router-dom';
 
 const History = () => {
     const [history, setHistory] = useState([]);
+    const navigate = useNavigate()
 
     const deleteHistory = (historyId) => {
         // Implement the deleteHistory function here
@@ -32,8 +24,15 @@ const History = () => {
                 setHistory(response.data.searchHistory); // Assuming 'searchHistory' is the key in your response JSON
             })
             .catch((error) => {
-                console.error(error);
-                // Handle the error appropriately
+                const errorMessage = error.response.data.mssg;
+                
+                if (errorMessage === "User is not onboarded") {
+                    // If user is not onboarded, navigate to the onboarding form
+                    navigate('/onboarding/form');
+                  } else {
+                    // If user is unauthorized (not logged in), redirect to Google OAuth login
+                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                  }
             });
     }, []);
 

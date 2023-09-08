@@ -4,7 +4,7 @@ import checkLoginStatus from './login-status';
 
 const searchCall = (async (navigate, location, setResults, setSearchConfig) => {
 
-    await checkLoginStatus(navigate)
+    //await checkLoginStatus(navigate)
 
     const searchParams = new URLSearchParams(location.search);
 
@@ -21,10 +21,19 @@ const searchCall = (async (navigate, location, setResults, setSearchConfig) => {
         .then((response) => {
             setResults(response.data.results)
             setSearchConfig(response.data.searchConfig)
-            console.log(response)
         })
         .catch((error) => {
-            console.log(error)
+            if (error.response && error.response.status === 401) {
+                const errorMessage = error.response.data.mssg;
+                
+                if (errorMessage === "User is not onboarded") {
+                    // If user is not onboarded, navigate to the onboarding form
+                    navigate('/onboarding/form');
+                  } else {
+                    // If user is unauthorized (not logged in), redirect to Google OAuth login
+                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                  }
+            }
         });
 })
 

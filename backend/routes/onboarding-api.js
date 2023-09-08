@@ -19,7 +19,6 @@ const { qdrantLock } = require('../utils/mutex')
 //     apiKey: process.env.QDRANT_API_KEY,
 // });
 
-onboardingRouter.use(authCheck)
 
 onboardingRouter.post('/loading', async (req, res) => {
     console.log(`onboarding ${req.user}`)
@@ -120,7 +119,7 @@ onboardingRouter.post('/form', async (req, res) => {
 
 })
 
-onboardingRouter.get('/onboarded-status', (req, res) => {
+onboardingRouter.get('/onboarded-status', authCheck, (req, res) => {
     if (req.user.isOnboarded) {
         res.status(200).json({ onboarded: true });
     } else {

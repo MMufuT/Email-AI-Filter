@@ -1,14 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import React, { Navigate, useRef, useEffect, useState } from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
-import axios from 'axios'
+import React, {useRef, useEffect, useState } from 'react';
 import magGlass from '../images/smartfilter128.png';
 import aiLogo from '../images/ai-logo.png'
 import filterIcon from '../images/filter-icon.png'
 import '../styles/search.css';
 import { useNavigate } from 'react-router-dom';
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import searchRedirect from '../functions/search-redirect'
 import checkLoginStatus from '../functions/login-status';

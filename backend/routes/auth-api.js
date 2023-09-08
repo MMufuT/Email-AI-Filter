@@ -20,7 +20,7 @@ auth_router.get('/logout', (req, res) => {
 
 auth_router.get('/login-status', authCheck, (req, res) => {
 
-    res.status(200).send(`User ${req.emailAddress} is authorized`)
+    res.status(200).send(`User ${req.emailAddress} is authorized and onboarded`)
 })
 
 //auth with google
