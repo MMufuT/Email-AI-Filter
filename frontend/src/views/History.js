@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import '../styles/history.css'
 import CustomNavbar from '../components/Custom-Navbar';
@@ -12,11 +12,6 @@ const History = () => {
     const [history, setHistory] = useState([]);
     const navigate = useNavigate()
 
-    const deleteHistory = (historyId) => {
-        // Implement the deleteHistory function here
-        // You can use this function to delete a history item by its ID
-    };
-
     useEffect(() => {
         axios
             .get(`${process.env.REACT_APP_SERVER_URL}/history`, { withCredentials: true })
@@ -25,14 +20,14 @@ const History = () => {
             })
             .catch((error) => {
                 const errorMessage = error.response.data.mssg;
-                
+
                 if (errorMessage === "User is not onboarded") {
                     // If user is not onboarded, navigate to the onboarding form
                     navigate('/onboarding/form');
-                  } else {
+                } else {
                     // If user is unauthorized (not logged in), redirect to Google OAuth login
                     window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
-                  }
+                }
             });
     }, []);
 
@@ -41,8 +36,16 @@ const History = () => {
             <CustomNavbar />
             <div className="row justify-content-center search-bg">
                 <div className="col-md-4 mt-5">
-                    <h1 className="mb-4" style={{ color: "white" }}>Search History</h1>
-    
+                    <h1 className="mb-4" style={{ color: "white"}}>Search History
+                        <button
+                            className="ms-4 delete-all-button"
+                            //onMouseEnter={(e) => e.target.style.backgroundColor = 'gray'}
+                            // onMouseLeave={(e) => e.target.style.backgroundColor = 'gray'}
+                            onClick={() => deleteAllHistory(setHistory)}
+                        >
+                            Clear History
+                        </button></h1>
+
                     {history.map((item) => (
                         <div key={item._id} className="mb-5 history-item">
                             <div className="history-content">
@@ -68,7 +71,7 @@ const History = () => {
                             </div>
                             <div className="delete-one-button-container">
                                 <button className="delete-one-button" onClick={() => deleteOneHistory(item._id, setHistory)}>
-                                    <img src={xImg} alt="Delete" style={{ height: "20px"}} />
+                                    <img src={xImg} alt="Delete" style={{ height: "20px" }} />
                                 </button>
                             </div>
                         </div>
@@ -77,7 +80,7 @@ const History = () => {
             </div>
         </div>
     );
-    
+
 
 
 

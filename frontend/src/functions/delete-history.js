@@ -10,10 +10,12 @@ export const deleteOneHistory = ((historyId, setHistory) => {
     })
 })
 
-export const deleteAllHistory = (() => {
+export const deleteAllHistory = ((setHistory) => {
     axios.delete(`${process.env.REACT_APP_SERVER_URL}/history/`, { withCredentials: true })
     .then((response) => {
-        console.log(`History was successfully cleared: ${response}`)
+        setHistory([]);
+        console.log(`History was successfully cleared:`)
+        console.log(response)
     })
     .catch((error) => {
         console.log(error)
