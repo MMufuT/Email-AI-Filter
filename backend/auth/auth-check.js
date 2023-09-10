@@ -11,4 +11,4 @@ const authCheck = (req, res, next) => {
     }
 };
 
-module.exports = authCheck;
+module.exports = authCheck

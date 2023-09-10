@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const historySchema = new mongoose.Schema({
     userId: {
@@ -17,7 +17,7 @@ const historySchema = new mongoose.Schema({
 
 
 },
-{timestamps: true});
+{timestamps: true})
 
-module.exports = mongoose.model('user-search-history', historySchema);
+module.exports = mongoose.model('user-search-history', historySchema)
 

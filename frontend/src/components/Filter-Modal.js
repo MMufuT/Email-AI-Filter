@@ -1,5 +1,5 @@
-import React from 'react';
-import DatePicker from 'react-datepicker';
+import React from 'react'
+import DatePicker from 'react-datepicker'
 
 const FilterModal = ({
     modalClassName,
@@ -28,7 +28,7 @@ const FilterModal = ({
                                 className="close"
                                 onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
                             >
-                                <span aria-hidden="true">&times;</span>
+                                <span aria-hidden="true">&times</span>
                             </button>
                         </div>
                         <div className="modal-body">
@@ -98,7 +98,7 @@ const FilterModal = ({
                 </div>
             </div>
         )
-    );
-};
+    )
+}
 
-export default FilterModal;
+export default FilterModal

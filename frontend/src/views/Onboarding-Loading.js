@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import { useNavigate } from 'react-router-dom'
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader'
-import axios from 'axios';
-import '../styles/onboarding.css';
+import axios from 'axios'
+import '../styles/onboarding.css'
 
 const OnboardingLoading = () => {
 
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         console.log('use effect entered')
         const checkStatus = (async () => {
@@ -20,21 +20,21 @@ const OnboardingLoading = () => {
                 })
                 .catch((error) => {
                     if (error.response && error.response.status === 401) {
-                        const errorMessage = error.response.data.mssg;
+                        const errorMessage = error.response.data.mssg
 
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
                         if (errorMessage === "User is not logged in") {
-                            window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                            window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
                         } else { /*do nothing*/}
                     }
-                });
+                })
 
-            setLoading(true);
+            setLoading(true)
 
             axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
                 .then(response => {
                     //if user has filled out the form and isn't onboared yet, continue onboarding
-                    setLoading(false);
+                    setLoading(false)
                     navigate('/search')
                 })
                 .catch(error => {
@@ -42,15 +42,15 @@ const OnboardingLoading = () => {
                         // If user hasn't filled out the form, redirect to form
                         setLoading(false)
                         console.log('User needs to fill out form before onbaording')
-                        navigate('/onboarding/form');
+                        navigate('/onboarding/form')
                     } else if (error.response && error.response.status === 409) {
                         // If user is already onboarded, redirect to search
-                        setLoading(false);
-                        navigate('/search');
-                        console.log('User is already onboarded');
+                        setLoading(false)
+                        navigate('/search')
+                        console.log('User is already onboarded')
                     }
-                    setLoading(false);
-                });
+                    setLoading(false)
+                })
         })
 
         checkStatus()
@@ -102,10 +102,10 @@ const OnboardingLoading = () => {
             )}
 
         </div>
-    );
-};
+    )
+}
 
 
 
 
-export default OnboardingLoading;
+export default OnboardingLoading

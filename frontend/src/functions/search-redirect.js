@@ -6,7 +6,7 @@ search criteria
 
 const searchRedirect = (navigate, query, sender, before, after) => {
     if (!query) return
-    navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`);
+    navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`)
 };
 
 export default searchRedirect

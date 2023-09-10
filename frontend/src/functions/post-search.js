@@ -1,12 +1,9 @@
 import axios from 'axios'
-import convertStringToUnixTimestamp from '../functions/string-to-unix';
-import checkLoginStatus from './login-status';
+import convertStringToUnixTimestamp from './string-to-unix'
 
-const searchCall = (async (navigate, location, setResults, setSearchConfig) => {
+const postSearch = (async (navigate, location, setResults, setSearchConfig) => {
 
-    //await checkLoginStatus(navigate)
-
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(location.search)
 
     const searchConfig = {
         query: searchParams.get('query'),
@@ -15,7 +12,7 @@ const searchCall = (async (navigate, location, setResults, setSearchConfig) => {
             before: convertStringToUnixTimestamp(searchParams.get('before')),
             after: convertStringToUnixTimestamp(searchParams.get('after'))
         }
-    };
+    }
 
     axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, searchConfig, { withCredentials: true })
         .then((response) => {
@@ -24,20 +21,20 @@ const searchCall = (async (navigate, location, setResults, setSearchConfig) => {
         })
         .catch((error) => {
             if (error.response && error.response.status === 401) {
-                const errorMessage = error.response.data.mssg;
+                const errorMessage = error.response.data.mssg
                 
                 if (errorMessage === "User is not onboarded") {
                     // If user is not onboarded, navigate to the onboarding form
-                    navigate('/onboarding/form');
+                    navigate('/onboarding/form')
                   } else {
                     // If user is unauthorized (not logged in), redirect to Google OAuth login
-                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
                   }
             }
-        });
+        })
 })
 
 
 
 
-export default searchCall
+export default postSearch

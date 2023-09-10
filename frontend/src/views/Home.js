@@ -1,7 +1,7 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import magGlass from '../images/smartfilter128.png';
+import React from 'react'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import magGlass from '../images/smartfilter128.png'
 
 const Home = () => {
 
@@ -46,7 +46,7 @@ const Home = () => {
 
 
 
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

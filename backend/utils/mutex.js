@@ -1,6 +1,6 @@
 const { Mutex } = require('async-mutex')
 
-const qdrantLock = new Mutex();
+const qdrantLock = new Mutex()
 
 module.exports = {
     qdrantLock

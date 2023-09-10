@@ -1,44 +1,44 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import React, {useRef, useEffect, useState } from 'react';
-import magGlass from '../images/smartfilter128.png';
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import React, {useRef, useEffect, useState } from 'react'
+import magGlass from '../images/smartfilter128.png'
 import aiLogo from '../images/ai-logo.png'
 import filterIcon from '../images/filter-icon.png'
-import '../styles/search.css';
-import { useNavigate } from 'react-router-dom';
-import 'react-datepicker/dist/react-datepicker.css';
+import '../styles/search.css'
+import { useNavigate } from 'react-router-dom'
+import 'react-datepicker/dist/react-datepicker.css'
 import searchRedirect from '../functions/search-redirect'
-import checkLoginStatus from '../functions/login-status';
-import CustomNavbar from '../components/Custom-Navbar';
-import FilterModal from '../components/Filter-Modal';
+import checkLoginStatus from '../functions/login-status'
+import CustomNavbar from '../components/Custom-Navbar'
+import FilterModal from '../components/Filter-Modal'
 
 
 const Search = () => {
-    const navigate = useNavigate();
-    const searchInput = useRef(null);
+    const navigate = useNavigate()
+    const searchInput = useRef(null)
 
-    const [showFilterForm, setShowFilterForm] = useState(false);
+    const [showFilterForm, setShowFilterForm] = useState(false)
 
-    const [selectedSender, setSelectedSender] = useState('');
-    const [selectedBeforeDate, setSelectedBeforeDate] = useState('');
-    const [selectedAfterDate, setSelectedAfterDate] = useState('');
+    const [selectedSender, setSelectedSender] = useState('')
+    const [selectedBeforeDate, setSelectedBeforeDate] = useState('')
+    const [selectedAfterDate, setSelectedAfterDate] = useState('')
 
-    const [tempSelectedSender, setTempSelectedSender] = useState('');
-    const [tempSelectedBeforeDate, setTempSelectedBeforeDate] = useState('');
-    const [tempSelectedAfterDate, setTempSelectedAfterDate] = useState('');
+    const [tempSelectedSender, setTempSelectedSender] = useState('')
+    const [tempSelectedBeforeDate, setTempSelectedBeforeDate] = useState('')
+    const [tempSelectedAfterDate, setTempSelectedAfterDate] = useState('')
 
     const toggleFilterForm = (sender, beforeDate, afterDate) => {
         setTempSelectedSender(sender)
         setTempSelectedBeforeDate(beforeDate)
         setTempSelectedAfterDate(afterDate)
-        setShowFilterForm(!showFilterForm);
-    };
+        setShowFilterForm(!showFilterForm)
+    }
 
     const applyFilters = (sender, beforeDate, afterDate) => {
         setSelectedSender(sender)
         setSelectedBeforeDate(beforeDate)
         setSelectedAfterDate(afterDate)
-        setShowFilterForm(false);
+        setShowFilterForm(false)
     }
 
     const handleKeyPress = event => {
@@ -49,9 +49,9 @@ const Search = () => {
                 selectedSender,
                 selectedBeforeDate,
                 selectedAfterDate
-            );
+            )
         }
-    };
+    }
 
     useEffect(() => {
         checkLoginStatus(navigate)
@@ -67,7 +67,7 @@ const Search = () => {
 
 
             <div className="row justify-content-center search-bg">
-                <div className="col-md-6 mt-5"  >
+                <div className="col-md-6 mt-5">
                     <img src={aiLogo} alt="Logo" className="search-logo-image" />
                     <div className="input-group">
                         <input
@@ -127,4 +127,4 @@ const Search = () => {
     )
 }
 
-export default Search;
+export default Search

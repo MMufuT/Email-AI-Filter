@@ -1,21 +1,15 @@
 require('dotenv').config()
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20');
-const User = require('../models/userSchema');
-const createEmbedding = require('../utils/embedding-functions')
-const { google } = require('googleapis');
-const { getGmailApiClient, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
-const { QdrantClient } = require('@qdrant/js-client-rest');
-const { v4: uuidv4 } = require('uuid');
-
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+const User = require('../models/userSchema')
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user.id)
 })
 
 passport.deserializeUser((id, done) => {
     User.findById(id).then((user) => {
-        done(null, user);
+        done(null, user)
     })
 })
 
@@ -35,11 +29,11 @@ passport.use(
 
             if (currentUser) {
                 // if user already exists
-                console.log('\nuser alredy exists: ' + currentUser.username + '\n');
+                console.log('\nuser alredy exists: ' + currentUser.username + '\n')
                 console.log(refreshToken)
-                currentUser.accessToken = accessToken;
-                currentUser.refreshToken = refreshToken;
-                done(null, currentUser);
+                currentUser.accessToken = accessToken
+                currentUser.refreshToken = refreshToken
+                done(null, currentUser)
             } else {
                 
 
@@ -52,15 +46,15 @@ passport.use(
                     refreshToken: refreshToken,
                     isOnboarded: false,
                 }).then((createdUser) => {
-                    console.log('\nnew user created: ' + createdUser + '\n');
-                    done(null, createdUser);
+                    console.log('\nnew user created: ' + createdUser + '\n')
+                    done(null, createdUser)
                 })
 
             }
         })
 
 
-        console.log('passport callback function fired');
+        console.log('passport callback function fired')
 
 
     })

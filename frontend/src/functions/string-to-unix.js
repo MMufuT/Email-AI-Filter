@@ -4,9 +4,9 @@ the job of this function to convert the string date into a unix timestamp so tha
 */
 
 const convertStringToUnixTimestamp = ((dateString) => {
-    const dateObject = new Date(dateString);
-    const unixTimestamp = dateObject.getTime() / 1000; // Convert to seconds
-    return unixTimestamp;
+    const dateObject = new Date(dateString)
+    const unixTimestamp = dateObject.getTime() / 1000 // Convert to seconds
+    return unixTimestamp
   })
   
   export default convertStringToUnixTimestamp

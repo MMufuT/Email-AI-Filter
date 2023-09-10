@@ -5,4 +5,4 @@ const scopes = [
     'https://www.googleapis.com/auth/gmail.modify'
 ]
 
-module.exports = scopes;
+module.exports = scopes

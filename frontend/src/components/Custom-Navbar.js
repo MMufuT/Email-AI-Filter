@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
-import magGlass from '../images/smartfilter128.png';
+import React from 'react'
+import { Navbar, Nav } from 'react-bootstrap'
+import magGlass from '../images/smartfilter128.png'
 
 const CustomNavbar = () => {
   return (
@@ -17,7 +17,7 @@ const CustomNavbar = () => {
         </Nav>
       </Navbar>
     </div>
-  );
-};
+  )
+}
 
-export default CustomNavbar;
+export default CustomNavbar

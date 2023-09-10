@@ -1,26 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import React, { useState, useEffect } from 'react'
 import CustomNavbar from '../components/Custom-Navbar'
+import getAccount from '../functions/get-account'
+import '../styles/account.css'
+import { useNavigate } from 'react-router-dom'
 
 const Account = () => {
 
+    const [account, setAccount] = new useState('')
+    const navigate = useNavigate()
+
     useEffect(() => {
-        //load user account form with existing user data
+        getAccount(navigate, setAccount)
     }, [])
 
     return (
         <div className="container-fluid search-bg vh-100">
             <CustomNavbar />
             <div className="row justify-content-center align-items-center mt-5">
+                <div className="card col-md-4 custom-card">
+                    <div className="card-body">
+                        <h3 className="card-title" style={{color:"white"}}>Account Information </h3>
+                        <img src={account.picture} alt="Profile Picture" style={{borderRadius:"60px", width:"10%"}}/>
+                    </div>
 
-                <form className="col-md-8 "
-                    style={{
-                        backgroundColor: '#202124', // Light gray background for the form
-                        padding: '20px',
-                        border: '2px solid #4A4949', // Light gray border
-                        borderRadius: '5px', // Rounded corners
-                    }}>
-
-        </form>
+                </div>
             </div>
 
         </div >

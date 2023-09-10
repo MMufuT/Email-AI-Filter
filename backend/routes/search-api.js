@@ -1,33 +1,23 @@
-const express = require('express');
-const searchRouter = express.Router();
-const Search = require('../models/historySchema');
-const User = require('../models/userSchema');
-const searchHistory = require('../models/historySchema');
-const passport = require('passport');
-const authCheck = require('../auth/auth-check');
-const { google } = require('googleapis');
-const { getGmailApiClient, loadMailToDB, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions');
-const getOAuthClient = require('../utils/get-oauth')
+const express = require('express')
+const searchRouter = express.Router()
+const searchHistory = require('../models/historySchema')
+const authCheck = require('../auth/auth-check')
 const { getSearchResults } = require('../utils/embedding-functions')
 const { formatDate } = require('../utils/unix-to-string')
 
-
 searchRouter.use(authCheck)
 
-searchRouter.post('/', async (req, res) => {
+searchRouter.post('/', async (req, res) => { 
+    try {
+    
     const user = req.user
-
-    // if (!user.isOnboarded) {
-    //     return res.status(401).json({ mssg: "not onboarded" })
-    // }
-
-
     const searchConfig = req.body
     const senderAddress = searchConfig.senderAddress
     const query = searchConfig.query
     const range = searchConfig.range
     const { emailAddress, emails, gmailLinkId } = user
     const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range)
+    
     const searchResults = rawSearchResults.map((data) => {
         const email = emails.find(email => email.gmailId === data.payload.gmailId)
         return {
@@ -43,7 +33,7 @@ searchRouter.post('/', async (req, res) => {
         userEmailAddress: user.emailAddress,
         query: query,
         // Add additional conditions to check for sender and date range if needed
-    });
+    })
 
     if (existingSearch) {
         existingSearch.updatedAt = new Date()
@@ -65,8 +55,12 @@ searchRouter.post('/', async (req, res) => {
     }
 
     res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
-});
+} catch (e) {
+    console.error('[POST /search/] Error occcured while searching for emails:', e)
+    res.status(500).send('Something went wrong while searching for emails:', e )
+}
+})
 
 
 
-module.exports = searchRouter;
+module.exports = searchRouter

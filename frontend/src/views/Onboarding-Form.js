@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import '../styles/onboarding.css';
-import categoryExample from '../images/categoryExample.jpg';
-import UserIdExample from '../images/UserID Example.jpg';
+import React, { useState, useEffect } from 'react'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import '../styles/onboarding.css'
+import categoryExample from '../images/categoryExample.jpg'
+import UserIdExample from '../images/UserID Example.jpg'
 
 const OnboardingForm = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         filterPreferences: {
             social: true,
@@ -17,41 +17,41 @@ const OnboardingForm = () => {
             forums: true,
         },
         gmailLinkId: "",
-    });
+    })
 
     const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
+        const { name, checked } = event.target
         setFormData((prevData) => ({
             ...prevData,
             filterPreferences: {
                 ...prevData.filterPreferences,
                 [name]: !checked,
             },
-        }));
-    };
+        }))
+    }
 
     const handleUserIdChange = (event) => {
         setFormData((prevData) => ({
             ...prevData,
             gmailLinkId: event.target.value,
-        }));
-    };
+        }))
+    }
 
     const handleSubmit = (event) => {
-        event.preventDefault();
+        event.preventDefault()
         // The finishedForm object will contain the formData
-        const finishedForm = formData;
-        console.log(finishedForm);
+        const finishedForm = formData
+        console.log(finishedForm)
         axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/form`, finishedForm, { withCredentials: true })
             .then((response) => {
                 console.log('Form details have been successfully uploaded to database')
-                navigate('/onboarding/loading');
+                navigate('/onboarding/loading')
             })
             .catch((error) => {
-                console.log(error);
-            });
+                console.log(error)
+            })
 
-    };
+    }
 
     // Auth check using useEffect
     useEffect(() => {
@@ -63,15 +63,15 @@ const OnboardingForm = () => {
                     navigate('/search')
                 })
                 .catch((error) => {
-                    const errorMessage = error.response.data.mssg;
+                    const errorMessage = error.response.data.mssg
                     if (errorMessage === "User is not onboarded") {
                         // If user is not onboarded, navigate to the onboarding form
-                        navigate('/onboarding/form');
+                        navigate('/onboarding/form')
                     } else {
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
-                        window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                        window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
                     }
-                });
+                })
 
             // await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
             //     .then((response) => {
@@ -87,7 +87,7 @@ const OnboardingForm = () => {
 
         checkStatus()
 
-    }, []);
+    }, [])
 
 
     return (
@@ -194,7 +194,7 @@ const OnboardingForm = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default OnboardingForm;
+export default OnboardingForm

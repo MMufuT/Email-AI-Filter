@@ -1,16 +1,16 @@
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import React from 'react';
-import { useEffect } from 'react';
-import jwt_decode from 'jwt-decode';
-import axios from 'axios';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import './App.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import React from 'react'
+import { useEffect } from 'react'
+import jwt_decode from 'jwt-decode'
+import axios from 'axios'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 
 //Pages
-//import Login from './views/Login.js';
-import Home from './views/Home.js';
+//import Login from './views/Login.js'
+import Home from './views/Home.js'
 import OnboardingLoading from './views/Onboarding-Loading'
 import OnboardingForm from './views/Onboarding-Form'
 import Search from './views/Search'
@@ -24,35 +24,35 @@ function App() {
   function handleCallbackResponse(response) {
 
     //This code is for testing purposes
-    console.log("Encoded JWT ID token: " + response.credential);
-    var userObject = jwt_decode(response.credential);
-    console.log(userObject);
+    console.log("Encoded JWT ID token: " + response.credential)
+    var userObject = jwt_decode(response.credential)
+    console.log(userObject)
     //----------------------------------------------------------------
-    const jwtToken = response.credential;
+    const jwtToken = response.credential
     const axiosInstance = axios.create({
       baseURL: process.env.REACT_APP_SERVER_URL,
       headers: {
         'Authorization': `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
-    });
-    console.log(process.env.REACT_APP_SERVER_URL);
+    })
+    console.log(process.env.REACT_APP_SERVER_URL)
 
     
     axiosInstance.get('/')
       .then(response => {
         if (response.status === 200) {
           // Display a success message
-          console.log('yup it worked!');
+          console.log('yup it worked!')
         }
       })
       .catch(error => {
-        console.log('nah that shit failed:');
-        console.log(error);
-      });
+        console.log('nah that shit failed:')
+        console.log(error)
+      })
 
     
-  };
+  }
 
   
   useEffect(() => { 
@@ -67,8 +67,8 @@ function App() {
     window.google.accounts.id.renderButton(
       document.getElementById("signInDiv"),
       { theme: "outline", size: "large"}
-    ); }
-  }, []);
+    ) }
+  }, [])
 
   
 
@@ -97,4 +97,4 @@ function App() {
   )
 }
 
-export default App;
+export default App

@@ -1,13 +1,16 @@
 require('dotenv').config();
 
-const axios = require('axios');
 const express = require('express');
 const cors = require('cors')
 const passport = require('passport');
-const passportSetup = require('./auth/passport-setup');
 const cookieSession = require('cookie-session');
-const authCheck = require('./auth/auth-check');
 const { onboardingQueue } = require('./utils/queue')
+
+/*
+I know it doesn't look like this is being used, but it is somehow.
+Deleting it will mess up something regarding sessions and cookie serializatoin/deserializaion
+*/
+const passportSetup = require('./auth/passport-setup');
 
 //express app
 const app = express();
@@ -55,25 +58,27 @@ app.get('/', (req, res) => {
 
 
 //setting up routes
-const historyRoutes = require('./routes/history-api');
-const searchRoutes = require('./routes/search-api');
-const authRoutes = require('./routes/auth-api');
+const historyRoutes = require('./routes/history-api')
+const searchRoutes = require('./routes/search-api')
+const authRoutes = require('./routes/auth-api')
 const onboardingRoutes = require('./routes/onboarding-api')
-app.use('/history', historyRoutes);
-app.use('/search', searchRoutes);
-app.use('/auth', authRoutes);
+const accountRouter = require('./routes/account-api')
+app.use('/history', historyRoutes)
+app.use('/search', searchRoutes)
+app.use('/auth', authRoutes)
 app.use('/onboarding', onboardingRoutes)
+app.use('/account', accountRouter)
 
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         //listen for requests
         app.listen(process.env.PORT, () => {
-            console.log('connected to MongoDB and listening on port', process.env.PORT, 'yuhhh');
-        });
+            console.log('connected to MongoDB and listening on port', process.env.PORT, 'yuhhh')
+        })
 
     })
     .catch((error) => {
-        console.log(error);
-    });
+        console.log(error)
+    })
 

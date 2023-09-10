@@ -1,53 +1,53 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import React, { useRef, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import magGlass from '../images/smartfilter128.png';
-import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import React, { useRef, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import magGlass from '../images/smartfilter128.png'
+import { useNavigate } from 'react-router-dom'
 import aiLogo from '../images/ai-logo.png'
 import filterIcon from '../images/filter-icon.png'
-import searchRedirect from '../functions/search-redirect';
-import 'react-datepicker/dist/react-datepicker.css';
+import searchRedirect from '../functions/search-redirect'
+import 'react-datepicker/dist/react-datepicker.css'
 import '../styles/search-results.css'
 import CustomNavbar from '../components/Custom-Navbar'
-import searchCall from '../functions/search-call'
-import FilterModal from '../components/Filter-Modal';
+import postSearch from '../functions/post-search'
+import FilterModal from '../components/Filter-Modal'
 
 
 const SearchResults = () => {
-  const searchInput = useRef(null);
+  const searchInput = useRef(null)
   const navigate = useNavigate()
-  const location = useLocation();
+  const location = useLocation()
   const tempParam = new URLSearchParams(location.search)
   const pageQuery = tempParam.get('query')
 
-  const [showFilterForm, setShowFilterForm] = useState(false);
+  const [showFilterForm, setShowFilterForm] = useState(false)
 
 
-  const [selectedSender, setSelectedSender] = useState('');
-  const [selectedBeforeDate, setSelectedBeforeDate] = useState('');
-  const [selectedAfterDate, setSelectedAfterDate] = useState('');
+  const [selectedSender, setSelectedSender] = useState('')
+  const [selectedBeforeDate, setSelectedBeforeDate] = useState('')
+  const [selectedAfterDate, setSelectedAfterDate] = useState('')
 
-  const [tempSelectedSender, setTempSelectedSender] = useState('');
-  const [tempSelectedBeforeDate, setTempSelectedBeforeDate] = useState('');
-  const [tempSelectedAfterDate, setTempSelectedAfterDate] = useState('');
+  const [tempSelectedSender, setTempSelectedSender] = useState('')
+  const [tempSelectedBeforeDate, setTempSelectedBeforeDate] = useState('')
+  const [tempSelectedAfterDate, setTempSelectedAfterDate] = useState('')
 
   const toggleFilterForm = (sender, beforeDate, afterDate) => {
     setTempSelectedSender(sender)
     setTempSelectedBeforeDate(beforeDate)
     setTempSelectedAfterDate(afterDate)
-    setShowFilterForm(!showFilterForm);
-  };
+    setShowFilterForm(!showFilterForm)
+  }
 
   const applyFilters = (sender, beforeDate, afterDate) => {
     setSelectedSender(sender)
     setSelectedBeforeDate(beforeDate)
     setSelectedAfterDate(afterDate)
-    setShowFilterForm(false);
+    setShowFilterForm(false)
   }
 
-  const [results, setResults] = useState([]);
-  const [searchConfig, setSearchConfig] = useState({});
+  const [results, setResults] = useState([])
+  const [searchConfig, setSearchConfig] = useState({})
 
   const handleKeyPress = event => {
     if (event.key === 'Enter') {
@@ -58,15 +58,15 @@ const SearchResults = () => {
         selectedBeforeDate,
         selectedAfterDate
       )
-      setTempSelectedSender('');
-      setTempSelectedBeforeDate('');
-      setTempSelectedAfterDate('');
+      setTempSelectedSender('')
+      setTempSelectedBeforeDate('')
+      setTempSelectedAfterDate('')
     }
-  };
+  }
 
   useEffect(() => {
-    searchCall(navigate, location, setResults, setSearchConfig)
-  }, [location.search, navigate]);
+    postSearch(navigate, location, setResults, setSearchConfig)
+  }, [location.search, navigate])
 
   return (
     <div className="container-fluid search-bg vh-100">
@@ -96,9 +96,9 @@ const SearchResults = () => {
                   selectedBeforeDate,
                   selectedAfterDate
                 )
-                setTempSelectedSender('');
-                setTempSelectedBeforeDate('');
-                setTempSelectedAfterDate('');
+                setTempSelectedSender('')
+                setTempSelectedBeforeDate('')
+                setTempSelectedAfterDate('')
               }}
             >
               <img src={magGlass} alt="Button" className="magGlass-search-bar" />
@@ -184,7 +184,7 @@ const SearchResults = () => {
 
 
     </div>
-  );
+  )
 
 
 }

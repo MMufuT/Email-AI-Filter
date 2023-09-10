@@ -1,7 +1,7 @@
-require('dotenv').config();
+require('dotenv').config()
 const { Configuration, OpenAIApi } = require('openai')
-const { QdrantClient } = require('@qdrant/js-client-rest');
-const { v4: uuidv4 } = require('uuid');
+const { QdrantClient } = require('@qdrant/js-client-rest')
+const { v4: uuidv4 } = require('uuid')
 
 const openai = new OpenAIApi(new Configuration({
   apiKey: process.env.OPENAI_API_KEY
@@ -10,7 +10,7 @@ const openai = new OpenAIApi(new Configuration({
 const qdrant = new QdrantClient({
   url: process.env.QDRANT_URL,
   apiKey: process.env.QDRANT_API_KEY,
-});
+})
 
 // embedding method
 const createEmbedding = async (input) => {
@@ -25,9 +25,9 @@ const createEmbedding = async (input) => {
 }
 
 const extractEmailAddress = async (emailString) => {
-  const match = emailString.match(/<([^>]+)>/);
-  return match && match[1] ? match[1] : emailString;
-};
+  const match = emailString.match(/<([^>]+)>/)
+  return match && match[1] ? match[1] : emailString
+}
 
 const addEmailtoQdrant = async (emailAddress, sender, subject, body, gmailId, unixTimestamp) => {
   input = `The following text is an email...\n\nSender: ${sender}
@@ -62,7 +62,7 @@ const createQdrantCollection = async (emailAddress) => {
     on_disk_payload: true
   })
     .catch((error) => {
-      console.error('Error occurred during Qdrant collection creation: ' + error);
+      console.error('Error occurred during Qdrant collection creation: ' + error)
     })
 }
 
@@ -73,7 +73,7 @@ const getSearchResults = async (userEmail, query, senderEmailAddress, range) => 
   // range.before and range.after are UnixTimestamps
 
 
-  const currentUnixTime = Math.floor(Date.now() / 1000);
+  const currentUnixTime = Math.floor(Date.now() / 1000)
   const queryVector = await createEmbedding(query)
   const results = await qdrant.search(userEmail, {
     vector: queryVector,
@@ -110,7 +110,7 @@ const getSearchResults = async (userEmail, query, senderEmailAddress, range) => 
         }
       ]
     }
-  });
+  })
 
   return results
 }

@@ -1,4 +1,4 @@
-const Bottleneck = require('bottleneck');
+const Bottleneck = require('bottleneck')
 
 // in calls/second
 const onboardingRateLimit = 35

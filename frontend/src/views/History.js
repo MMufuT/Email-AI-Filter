@@ -1,35 +1,21 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import React, { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.js'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import '../styles/history.css'
-import CustomNavbar from '../components/Custom-Navbar';
+import CustomNavbar from '../components/Custom-Navbar'
 import xImg from '../images/x.png'
-import { deleteOneHistory, deleteAllHistory } from '../functions/delete-history';
-import { useNavigate } from 'react-router-dom';
+import { deleteOneHistory, deleteAllHistory } from '../functions/delete-history'
+import getHistory from '../functions/get-history'
+import { useNavigate } from 'react-router-dom'
 
 const History = () => {
-    const [history, setHistory] = useState([]);
+    const [history, setHistory] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
-        axios
-            .get(`${process.env.REACT_APP_SERVER_URL}/history`, { withCredentials: true })
-            .then((response) => {
-                setHistory(response.data.searchHistory); // Assuming 'searchHistory' is the key in your response JSON
-            })
-            .catch((error) => {
-                const errorMessage = error.response.data.mssg;
-
-                if (errorMessage === "User is not onboarded") {
-                    // If user is not onboarded, navigate to the onboarding form
-                    navigate('/onboarding/form');
-                } else {
-                    // If user is unauthorized (not logged in), redirect to Google OAuth login
-                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
-                }
-            });
-    }, []);
+        getHistory(navigate, setHistory)
+    }, [])
 
     return (
         <div className="container-fluid search-bg vh-100">
@@ -79,7 +65,7 @@ const History = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 
 
 
@@ -88,9 +74,9 @@ const History = () => {
 
 
 
-};
+}
 
-export default History;
+export default History
 
 
 
