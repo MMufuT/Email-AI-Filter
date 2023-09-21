@@ -72,17 +72,6 @@ const OnboardingForm = () => {
                         window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
                     }
                 })
-
-            // await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
-            //     .then((response) => {
-            //         if (response.data.onboarded) {
-            //             // redirects if user is already onboarded
-            //             navigate('/search')
-            //         }
-            //     })
-            //     .catch((error) => {
-            //         console.log(error)
-            //     })
         })
 
         checkStatus()
@@ -91,7 +80,7 @@ const OnboardingForm = () => {
 
 
     return (
-        <div className="login-area d-flex align-items-center justify-content-center">
+        <div className="login-area d-flex align-items-center justify-content-center container-fluid">
             <div className="row justify-content-center">
                 <div className="col-sm-8 my-2">
                     <div className="card">

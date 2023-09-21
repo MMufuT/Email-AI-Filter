@@ -28,7 +28,7 @@ const FilterModal = ({
                                 className="close"
                                 onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
                             >
-                                <span aria-hidden="true">&times</span>
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div className="modal-body">

@@ -23,6 +23,12 @@
   background-color: #202124;
 }
 
+.logout-nav {
+  width: 18px;
+  height: auto;
+  margin-bottom: 4%
+}
+
 .form-control {
   height: 50px;
   border-radius: 20px;

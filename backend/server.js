@@ -65,9 +65,10 @@ const onboardingRoutes = require('./routes/onboarding-api')
 const accountRouter = require('./routes/account-api')
 app.use('/history', historyRoutes)
 app.use('/search', searchRoutes)
-app.use('/auth', authRoutes)
 app.use('/onboarding', onboardingRoutes)
 app.use('/account', accountRouter)
+app.use('/auth', authRoutes)
+
 
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)

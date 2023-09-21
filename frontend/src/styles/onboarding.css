@@ -11,6 +11,10 @@
     font-style: normal;
     src: url('../../public/Nunito-VariableFont_wght.ttf') format('truetype');
   }
+
+  @font-face {
+    
+  }
   
   /* Optional: If you want to create a class for using Nunito font */
   .nunito {

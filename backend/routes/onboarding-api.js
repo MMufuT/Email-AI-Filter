@@ -2,15 +2,17 @@ require('dotenv').config()
 const express = require('express')
 const onboardingRouter = express.Router()
 const User = require('../models/userSchema')
-const { addEmailtoQdrant, createQdrantCollection } = require('../utils/embedding-functions')
+const { addEmailtoQdrant, createQdrantCollection, deleteQdrantCollection } = require('../utils/embedding-functions')
 const { getGmailApiClient, getOnboardingMail, newToOldMailSort } = require('../utils/gmail-functions')
 const getOAuthClient = require('../utils/get-oauth')
 const authCheck = require('../auth/auth-check')
 const { onboardingQueue } = require('../utils/queue')
 const { qdrantLock } = require('../utils/mutex')
 
+
+
 onboardingRouter.post('/loading', async (req, res) => {
-    console.log(`onboarding ${req.user}`)
+    console.log(`started onboarding for ${req.user.emailAddress}`)
     if (!req.user) {
         // If req.user is not defined or empty, handle the error
         return res.status(400).json({ error: 'User data not available.' })
@@ -33,6 +35,9 @@ onboardingRouter.post('/loading', async (req, res) => {
                     const gmailApi = await getGmailApiClient(oAuth2Client, currentUser)
                     const emails = await getOnboardingMail(gmailApi, inboxFilter)
                     sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
+                }).catch(error => {
+                    onboardingQueue.resume()
+                    console.error('Error occured while queue was paused:', error)
                 })
 
             // un-pause redis queue b/c we're done using gmail api
@@ -46,7 +51,7 @@ onboardingRouter.post('/loading', async (req, res) => {
             console.log(`qdrant lock acquired for: ${emailAddress}`)
             await createQdrantCollection(emailAddress)
             console.log(`Collection "${emailAddress}" created!`)
-            
+
 
             for (let email of sortedEmails) {
                 const unixTimestamp = Math.floor(email.sentDate.getTime() / 1000)
@@ -64,9 +69,14 @@ onboardingRouter.post('/loading', async (req, res) => {
                     emails: sortedEmails,
                 }
             )
-            onboardingQueue.add('onboarding', { userId: userId }, {removeOnComplete: true, removeOnFail: true})
+            onboardingQueue.add('onboarding', { userId: userId }, { removeOnComplete: true, removeOnFail: true })
+            .then(async (job) => {
+                await User.findByIdAndUpdate(userId, {
+                    onboardingQueueId: job.id
+                })
+            })
 
-            console.log('\nFinished onboarding: User updated with onboarding data:\n')
+            console.log(`Finished onboarding for ${emailAddress}`)
             res.status(200).send('Success: Onboarding Complete')
 
         } else if (isOnboarded) {
@@ -77,7 +87,7 @@ onboardingRouter.post('/loading', async (req, res) => {
 
     } catch (e) {
         console.error('[POST /onboarding/loading] Error during onboarding:', e)
-        return res.status(500).json('Something went wrong with the onboarding process. Try again later')
+        res.status(500).json('Something went wrong with the onboarding process. Try again later')
     }
 })
 
@@ -105,12 +115,42 @@ onboardingRouter.post('/form', async (req, res) => {
 
 })
 
+onboardingRouter.patch('/reset', async (req, res) => {
+    try {
+        const userId = req.user.id
+        const { emailAddress, onboardingQueueId } = req.user
+        const job = await onboardingQueue.getJob(onboardingQueueId);
+        console.log("testing", onboardingQueueId)
+        console.log(onboardingQueue.getJobCounts())
+
+        if ((job && job.isActive) || (job && job.isPaused)) {
+            console.log(`Job ${onboardingQueueId} is still active`)
+            return res.status(503).send('Please wait until your gmail database has finished loading before resetting your filter preferences')
+        }
+        else {
+            await User.findByIdAndUpdate(
+                userId,
+                {
+                    isOnboarded: false,
+                    emails: []
+                },
+                { new: true }
+            )
+            await deleteQdrantCollection(emailAddress)
+            res.status(200).send('Onboarding process was successfully reset')
+        }
+    } catch (e) {
+        console.error('[PATCH /onboarding/reset] Error resetting onboarding status:', e)
+        res.status(500).send('Something went wrong while resetting onboarding status')
+    }
+})
+
 onboardingRouter.get('/onboarded-status', authCheck, (req, res) => {
-    try{
+    try {
         if (req.user.isOnboarded) {
-            res.status(200).json({ onboarded: true })
+            return res.status(200).json({ onboarded: true })
         } else {
-            res.status(200).json({ onboarded: false })
+            return res.status(200).json({ onboarded: false })
         }
     } catch (e) {
         console.error('[GET /onboarding/onboarding-status] Error while getting onboarded status:', e)

@@ -12,10 +12,13 @@ auth_router.get('/login', (req, res) => {
 
 //auth logout
 auth_router.get('/logout', (req, res) => {
-    //handle with passport
-    //res.send('logging out')
-    req.logout()
-    res.redirect(`${process.env.FRONTEND_URL}/`)
+    try {
+        req.logout()
+        res.status(200).send('Logout was successful')
+    } catch(e) {
+        console.error('[GET /auth/logout] Seomthing went wrong with the logout')
+        res.status(500).send('Something went wrong with the logout')
+    }
 })
 
 auth_router.get('/login-status', authCheck, (req, res) => {

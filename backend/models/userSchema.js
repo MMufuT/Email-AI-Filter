@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     inboxFilter: String,
     gmailLinkId: String,
     isOnboarded: Boolean,
+    onboardingQueueId: String,
     emails: [{
         gmailId: String,
         sentDate: Date,

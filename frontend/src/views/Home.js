@@ -37,7 +37,7 @@ const Home = () => {
 
 
       <div className="d-flex justify-content-center">
-        <a href="http://localhost:8000/auth/google">
+        <a href={`${process.env.REACT_APP_SERVER_URL}/auth/google`}>
           <button type="button" className="btn btn-primary">Google+</button>
         </a>
       </div>

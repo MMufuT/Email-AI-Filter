@@ -7,58 +7,58 @@ const { formatDate } = require('../utils/unix-to-string')
 
 searchRouter.use(authCheck)
 
-searchRouter.post('/', async (req, res) => { 
+searchRouter.post('/', async (req, res) => {
     try {
-    
-    const user = req.user
-    const searchConfig = req.body
-    const senderAddress = searchConfig.senderAddress
-    const query = searchConfig.query
-    const range = searchConfig.range
-    const { emailAddress, emails, gmailLinkId } = user
-    const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range)
-    
-    const searchResults = rawSearchResults.map((data) => {
-        const email = emails.find(email => email.gmailId === data.payload.gmailId)
-        return {
-            sender: email.sender,
-            subject: email.subject,
-            body: email.body,
-            emailLink: `https://mail.google.com/mail/u/${gmailLinkId}/#inbox/${email.gmailId}`
-        }
-    })
 
-    const existingSearch = await searchHistory.findOne({
-        userId: user.id,
-        userEmailAddress: user.emailAddress,
-        query: query,
-        // Add additional conditions to check for sender and date range if needed
-    })
+        const user = req.user
+        const searchConfig = req.body
+        const senderAddress = searchConfig.senderAddress
+        const query = searchConfig.query
+        const range = searchConfig.range
+        const { emailAddress, emails, gmailLinkId } = user
+        const rawSearchResults = await getSearchResults(emailAddress, query, senderAddress, range)
 
-    if (existingSearch) {
-        existingSearch.updatedAt = new Date()
-        await existingSearch.save()
-    } else {
-        searchHistory.create({
+        const searchResults = rawSearchResults.map((data) => {
+            const email = emails.find(email => email.gmailId === data.payload.gmailId)
+            return {
+                sender: email.sender,
+                subject: email.subject,
+                body: email.body,
+                emailLink: `https://mail.google.com/mail/u/${gmailLinkId}/#inbox/${email.gmailId}`
+            }
+        })
+
+        const existingSearch = await searchHistory.findOne({
             userId: user.id,
             userEmailAddress: user.emailAddress,
             query: query,
+            // Add additional conditions to check for sender and date range if needed
         })
-    }
 
-    if (searchConfig.range.after) {
-        searchConfig.range.after = formatDate(searchConfig.range.after)
-    }
+        if (existingSearch) {
+            existingSearch.updatedAt = new Date()
+            await existingSearch.save()
+        } else {
+            searchHistory.create({
+                userId: user.id,
+                userEmailAddress: user.emailAddress,
+                query: query,
+            })
+        }
 
-    if (searchConfig.range.before) {
-        searchConfig.range.before = formatDate(searchConfig.range.before)
-    }
+        if (searchConfig.range.after) {
+            searchConfig.range.after = formatDate(searchConfig.range.after)
+        }
 
-    res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
-} catch (e) {
-    console.error('[POST /search/] Error occcured while searching for emails:', e)
-    res.status(500).send('Something went wrong while searching for emails:', e )
-}
+        if (searchConfig.range.before) {
+            searchConfig.range.before = formatDate(searchConfig.range.before)
+        }
+
+        res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
+    } catch (e) {
+        console.error('[POST /search/] Error occcured while searching for emails:', e)
+        res.status(500).send('Something went wrong while searching for emails')
+    }
 })
 
 

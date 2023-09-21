@@ -2,6 +2,9 @@ const express = require('express')
 const accountRouter = express.Router()
 const authCheck = require('../auth/auth-check')
 const User = require('../models/userSchema')
+const History = require('../models/historySchema')
+const { deleteQdrantCollection } = require('../utils/embedding-functions')
+const { onboardingQueue } = require('../utils/queue')
 
 accountRouter.use(authCheck)
 
@@ -16,9 +19,9 @@ accountRouter.get('/', (req, res) => {
     }
 })
 
-accountRouter.put('/update', async (req, res) => {
+accountRouter.patch('/update', async (req, res) => {
     try {
-        const gmailLinkId = req.body
+        const gmailLinkId = req.body.gmailLinkId
         const userId = req.user.id
         const updatedUser = await User.findByIdAndUpdate(
             userId,
@@ -30,11 +33,31 @@ accountRouter.put('/update', async (req, res) => {
             return res.status(404).send('User not found')
         }
 
-        res.status(200).send('Account information updated successfully')
+        res.status(200).json({
+            mssg: 'Account information updated successfully',
+            newGmailLinkId: updatedUser.gmailLinkId
+        })
 
     } catch (e) {
-        console.error('[PUT /account/update] Error occurred while updating account information:', e)
+        console.error('[PATCH /account/update] Error occurred while updating account information:', e)
         res.status(500).send('Something went wrong while updating account information')
+    }
+})
+
+accountRouter.delete('/delete', async (req, res) => {
+    try {
+        const userId = req.user.id
+        const { emailAddress } = req.user
+        await History.deleteMany({ userId: userId })
+        const deletedMongoUser = await User.findByIdAndDelete(userId)
+        const deletedQdrantUser = await deleteQdrantCollection(emailAddress)
+        if(!deletedMongoUser || !deletedQdrantUser){
+            return res.status(404).send('User not found')
+        }
+        res.status(200).send(`User ${emailAddress} deleted successfully`)
+    } catch (e) {
+            console.error('[DELETE /account/delete] Error occurred while deleting user:', e)
+            res.status(500).send('Something went wrong while deleting user')
     }
 })
 
