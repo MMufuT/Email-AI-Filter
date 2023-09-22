@@ -48,7 +48,7 @@ const Account = () => {
     return (
         <div className="container-fluid search-bg vh-100">
             <CustomNavbar />
-            <div className="row justify-content-center align-items-center mt-5">
+            <div className="row justify-content-center align-items-between mt-3">
                 <div className="card col-md-4 custom-card">
                     <div className="card-body">
                         <div className="d-flex align-items-center justify-content-center mt-2">
@@ -123,25 +123,25 @@ const Account = () => {
                 </div>
             </div>
             <Modal
-  show={showConfirmation}
-  onHide={handleCloseConfirmation}
-  centered // Use the "centered" prop to center the modal vertically
->
-  <Modal.Header closeButton>
-    <Modal.Title>Delete Account</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <p>Are you absolutely sure you want to delete your account?</p>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseConfirmation}>
-      Cancel
-    </Button>
-    <Button variant="danger" onClick={() => { deleteAccount(navigate) }}>
-      Delete
-    </Button>
-  </Modal.Footer>
-</Modal>
+                show={showConfirmation}
+                onHide={handleCloseConfirmation}
+                centered // Use the "centered" prop to center the modal vertically
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Account</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Are you absolutely sure you want to delete your account?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseConfirmation}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={() => { deleteAccount(navigate) }}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div >
     )
 }
