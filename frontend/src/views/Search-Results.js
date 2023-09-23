@@ -74,8 +74,10 @@ const SearchResults = () => {
       <CustomNavbar />
       <div className="row justify-content-start search-bg" >
 
-        <div className="col-md-6 mt-4 ms-3 d-flex align-items-center"  >
-          <img src={aiLogo} alt="Logo" className="results-logo-image me-3"/>
+        <div className="col-md-6 mt-4 ms-3 d-flex align-items-center">
+          <a href={`${process.env.REACT_APP_CLIENT_URL}/search`}>
+            <img src={aiLogo} alt="Logo" className="results-logo-image me-3" />
+          </a>
           <div className="input-group" style={{ outline: "0px solid red" }} >
             <input
               type="text"
@@ -169,7 +171,7 @@ const SearchResults = () => {
                   style={{ color: 'white' }}
                 >
                   <div className="sender">{result.sender}</div>
-                  <a href={result.emailLink} className="subject">
+                  <a href={result.emailLink} target="_blank" className="subject">
                     {result.subject}
                   </a>
                   <div className="email-body">{result.body}</div>

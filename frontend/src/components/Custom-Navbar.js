@@ -25,9 +25,13 @@ const CustomNavbar = () => {
           <Nav.Link href="/search">Search</Nav.Link>
           <Nav.Link href="/account">Account</Nav.Link>
         </Nav>
-        <div className="col-xs-1 d-flex me-3" style={{outline:"0px solid red"}}>
+        <div className="col-xs-1 d-flex" style={{ outline: "0px solid red", marginTop:"0.4%"}}>
+          <a href="https://www.buymeacoffee.com/MufuT" target="_blank">
+            <img style={{ height: "85%", width: "auto" }} src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=MufuT&button_colour=8d8d8b&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=FFDD00" />
+          </a>
+        </div>
+        <div className="col-xs-1 d-flex me-3" style={{ outline: "0px solid red" }}>
           <button className=" btn btn-danger" onClick={() => logout(navigate)}>Logout<img src={logoutIcon} alt="logout" className="logout-nav ms-2" /></button>
-          
         </div>
       </Navbar>
 
