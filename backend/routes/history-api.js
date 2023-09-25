@@ -2,8 +2,10 @@ const express = require('express')
 const historyRouter = express.Router()
 const History = require('../models/historySchema')
 const authCheck = require('../auth/auth-check')
+const onboardingCheck = require('../auth/onboarding-check')
 
 historyRouter.use(authCheck)
+historyRouter.use(onboardingCheck)
 
 // GET user's search history
 historyRouter.get('/', (req, res) => {

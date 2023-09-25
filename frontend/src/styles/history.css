@@ -9,25 +9,17 @@
     border: 2px solid #4A4949;
     border-radius: 40px;
     box-shadow: 0px 2px 4px rgba(248, 247, 247, 0.1);
-    position: relative; /* Enable relative positioning for absolute child */
+    position: relative;
 }
 
 .history-content {
     flex: 1;
 }
 
-.searched-query {
-    /* Style for the searched query text */
-}
-
-.searched-time {
-    /* Style for the searched time text */
-}
-
 .delete-one-button-container {
     position: absolute;
-    top: 22px; /* Adjust the top spacing */
-    right: 20px; /* Adjust the right spacing */
+    top: 22px;
+    right: 20px;
 }
 
 .delete-one-button {
@@ -36,7 +28,6 @@
     padding: 0;
 }
 
-/* CSS */
 .delete-all-button {
   align-items: center;
   appearance: none;
@@ -78,4 +69,3 @@
   box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%);
   outline: none;
 }
-

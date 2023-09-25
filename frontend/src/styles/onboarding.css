@@ -4,7 +4,6 @@
     src: url('../../public/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
   }
   
-  /* Add the regular version of Nunito if needed (from the Nunito-VariableFont_wght.ttf file) */
   @font-face {
     font-family: 'Nunito';
     font-weight: normal;
@@ -12,7 +11,6 @@
     src: url('../../public/Nunito-VariableFont_wght.ttf') format('truetype');
   }
   
-  /* Optional: If you want to create a class for using Nunito font */
   .nunito {
     font-family: 'Nunito', sans-serif;
   }
@@ -29,12 +27,6 @@
     height: 100%;
   }
 
-  /* .login-area {
-    background: radial-gradient(circle, #d85344, rgb(104, 226, 104), #f2fb42);
-    width: 100%;
-    height: 100vh;
-  }
-   */
   .box-area {
     position: absolute;
     top: 0;
@@ -48,10 +40,10 @@
     position: absolute;
     display: block;
     list-style: none;
-    width: 80px; /* Adjust the width to control the size of the circles */
-    height: 80px; /* Adjust the height to control the size of the circles */
-    border-radius: 50%; /* Set border-radius to 50% to create full circles */
-    background: rgba(255, 255, 255, 0.4); /* Adjust the alpha value to control transparency */
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
     animation: animate 10s linear infinite;
     bottom: -150px;
   }

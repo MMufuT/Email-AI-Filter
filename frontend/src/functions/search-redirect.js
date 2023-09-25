@@ -3,7 +3,6 @@ When the user clicks the search button or 'enter', this function redirects the u
 search criteria
 */
 
-
 const searchRedirect = (navigate, query, sender, before, after) => {
     if (!query) return
     navigate(`/search/results?query=${encodeURIComponent(query)}&sender=${encodeURIComponent(sender)}&before=${before}&after=${after}`)

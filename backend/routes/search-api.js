@@ -4,10 +4,12 @@ const searchHistory = require('../models/historySchema')
 const authCheck = require('../auth/auth-check')
 const { getSearchResults } = require('../utils/embedding-functions')
 const { formatDate } = require('../utils/unix-to-string')
+const onboardingCheck = require('../auth/onboarding-check')
 
 searchRouter.use(authCheck)
+searchRouter.use(onboardingCheck)
 
-searchRouter.post('/', async (req, res) => {
+searchRouter.post('/', onboardingCheck, async (req, res) => {
     try {
 
         const user = req.user

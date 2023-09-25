@@ -25,7 +25,7 @@ const OnboardingLoading = () => {
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
                         if (errorMessage === "User is not logged in") {
                             window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
-                        } else { /*do nothing*/}
+                        } else { /*do nothing*/ }
                     }
                 })
 
@@ -54,16 +54,12 @@ const OnboardingLoading = () => {
         })
 
         checkStatus()
-
-
-
-
     }, [])
 
     return (
         <div className='animation-area'>
             <div className='box-area'>
-                {/* Wave animation elements */}
+                {/* Bubble animation */}
                 <li></li>
                 <li></li>
                 <li></li>

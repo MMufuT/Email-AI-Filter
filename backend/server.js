@@ -42,11 +42,11 @@ app.use((req, res, next) => {
 });
 
 
-//middleware logger
-app.use((req, res, next) => {
-    console.log(req.originalUrl, req.method);
-    next();
-});
+// //middleware logger (development only)
+// app.use((req, res, next) => {
+//     console.log(req.originalUrl, req.method);
+//     next();
+// });
 
 //root route
 app.get('/', (req, res) => {

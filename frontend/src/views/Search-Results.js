@@ -23,7 +23,6 @@ const SearchResults = () => {
 
   const [showFilterForm, setShowFilterForm] = useState(false)
 
-
   const [selectedSender, setSelectedSender] = useState('')
   const [selectedBeforeDate, setSelectedBeforeDate] = useState('')
   const [selectedAfterDate, setSelectedAfterDate] = useState('')

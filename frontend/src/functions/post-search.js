@@ -1,13 +1,17 @@
 import axios from 'axios'
 import convertStringToUnixTimestamp from './string-to-unix'
 
+/*
+POST /search API call. Used to search and return matching emails from qdrant for matching emails
+and add search query to search history 
+*/
 const postSearch = (async (navigate, location, setResults, setSearchConfig) => {
 
     const searchParams = new URLSearchParams(location.search)
 
     const searchConfig = {
         query: searchParams.get('query'),
-        senderAddress: searchParams.get('sender'), // or specify an email address
+        senderAddress: searchParams.get('sender'),
         range: {
             before: convertStringToUnixTimestamp(searchParams.get('before')),
             after: convertStringToUnixTimestamp(searchParams.get('after'))
@@ -20,16 +24,15 @@ const postSearch = (async (navigate, location, setResults, setSearchConfig) => {
             setSearchConfig(response.data.searchConfig)
         })
         .catch((error) => {
-            if (error.response && error.response.status === 401) {
+            if (error.response && error.response.status === 409) {
                 const errorMessage = error.response.data.mssg
-                
+
                 if (errorMessage === "User is not onboarded") {
-                    // If user is not onboarded, navigate to the onboarding form
                     navigate('/onboarding/form')
-                  } else {
-                    // If user is unauthorized (not logged in), redirect to Google OAuth login
-                    window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
-                  }
+                }
+            }
+            else if (error.response && error.response.status === 401) {
+                window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
             }
         })
 })

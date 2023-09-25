@@ -10,18 +10,9 @@ const dbUpdateRateLimit = 10
 const onboardingRateLimiter = new Bottleneck({
   maxConcurrent: 8,
   minTime: 1000 / onboardingRateLimit,
-});
+})
 
-const dbUpdateRateLimiter = new Bottleneck({
-  maxConcurrent: 1,
-  minTime: 1000 / dbUpdateRateLimit,
-});
-
-
-module.exports = {
-  onboardingRateLimiter,
-  dbUpdateRateLimiter
-}
+module.exports = { onboardingRateLimiter }
 
 
 

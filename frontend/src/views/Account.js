@@ -19,12 +19,10 @@ const Account = () => {
 
     const [showConfirmation, setShowConfirmation] = useState(false);
 
-    // Function to show the confirmation dialog
     const handleShowConfirmation = () => {
         setShowConfirmation(true);
     };
 
-    // Function to hide the confirmation dialog
     const handleCloseConfirmation = () => {
         setShowConfirmation(false);
     };
@@ -55,26 +53,23 @@ const Account = () => {
                             <img src={account.picture} alt="Profile Picture" style={{ borderRadius: "60px", width: "10%" }} />
                             <h3 className="card-title ms-5 pt-2" style={{ color: "white", outline: "0px solid red" }}>Account Information </h3>
                         </div>
-
                         <div className="d-flex justify-content-start my-5">
                             <text style={{ color: "#a7aab0" }}>Email Address:&nbsp;</text>
                             <text style={{ color: "white" }}>{account.emailAddress}</text>
                         </div>
-
                         <hr style={{ borderColor: "white" }} />
-
                         <div className=" justify-content-start mt-5">
                             <text style={{ color: "#a7aab0" }}>Inbox Filters:&nbsp;</text>
-                            <text style={{ color: "white" }}>{account.inboxFilter}</text>
+                            <text style={{ color: "white" }}>{account.inboxFilter}</text><br/>
+                            <text style={{ color: "#a7aab0" }}>Oldest Email Filter Database:&nbsp;</text>
+                            <text style={{ color: "white" }}>{account.oldestEmail}</text>
                         </div>
                         <div className="d-flex justify-content-end mt-3 mb-3">
                             <button className="btn btn-danger mt-2" style={{ marginTop: "-1.2%", fontSize: "80%" }}
                                 onClick={() => patchFilterPreferences(navigate)}
                             >Reset Preferences</button>
                         </div>
-
                         <hr style={{ borderColor: "white" }} />
-
                         <div className="d-flex justify-content-start mt-5">
                             <text style={{ color: "#a7aab0" }}>Gmail Link ID:&nbsp;</text>
                             <text style={{ color: "white" }}>{account.gmailLinkId}</text>
@@ -92,8 +87,6 @@ const Account = () => {
                                     defaultValue={tempGmailLinkId}
                                     onChange={(e) => handleGmailLinkIdChange(e)}
                                     min="0"
-
-
                                 />
                                 <a href={`https://mail.google.com/mail/u/${tempGmailLinkId}`} style={{ color: "#57abf6" }}>/#inbox</a>
                             </div>
@@ -104,9 +97,7 @@ const Account = () => {
                                     patchAccount(account, setAccount, tempGmailLinkId, navigate)
                                 }}>Save</button>
                         </div>
-
                         <hr style={{ borderColor: "white" }} />
-
                         <div className="d-flex justify-content-start mt-4">
                             <h3 style={{ color: "red" }}>Danger Zone</h3>
                         </div>
@@ -114,12 +105,6 @@ const Account = () => {
                             <button className="btn btn-danger" onClick={handleShowConfirmation}>Delete Account</button>
                         </div>
                     </div>
-
-
-
-
-
-
                 </div>
             </div>
             <Modal

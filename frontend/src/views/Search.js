@@ -65,7 +65,6 @@ const Search = () => {
                 <div className="col" style={{ backgroundColor: '#202124', minHeight: '100px' }}></div>
             </div>
 
-
             <div className="row justify-content-center search-bg">
                 <div className="col-md-6 mt-5">
                     <img src={aiLogo} alt="Logo" className="search-logo-image" />
@@ -94,7 +93,6 @@ const Search = () => {
             </div>
 
             <div className="row justify-content-center search-bg" >
-
                 <div className="col-md-6">
                     <button className="btn" type="button"
                         onClick={() => toggleFilterForm(selectedSender, selectedBeforeDate, selectedAfterDate)}
@@ -102,7 +100,6 @@ const Search = () => {
                         <img src={filterIcon} alt="filter icon" className="search-filter-icon " />
                     </button>
                 </div>
-
                 <FilterModal
                     modalClassName="search-filter-popup"
                     showFilterForm={showFilterForm}
@@ -120,10 +117,6 @@ const Search = () => {
                 />
             </div>
         </div>
-
-
-
-
     )
 }
 

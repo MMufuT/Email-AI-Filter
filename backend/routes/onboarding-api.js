@@ -8,8 +8,11 @@ const getOAuthClient = require('../utils/get-oauth')
 const authCheck = require('../auth/auth-check')
 const { onboardingQueue } = require('../utils/queue')
 const { qdrantLock } = require('../utils/mutex')
+const onboardingCheck = require('../auth/onboarding-check')
 
 
+
+onboardingRouter.use(authCheck)
 
 onboardingRouter.post('/loading', async (req, res) => {
     console.log(`started onboarding for ${req.user.emailAddress}`)
@@ -64,7 +67,7 @@ onboardingRouter.post('/loading', async (req, res) => {
             await User.findByIdAndUpdate(
                 userId,
                 {
-                    latestEmail: sortedEmails[0].sentDate,
+                    oldestEmail: sortedEmails[sortedEmails.length - 1].sentDate,
                     isOnboarded: true,
                     emails: sortedEmails,
                 }
@@ -145,16 +148,8 @@ onboardingRouter.patch('/reset', async (req, res) => {
     }
 })
 
-onboardingRouter.get('/onboarded-status', authCheck, (req, res) => {
-    try {
-        if (req.user.isOnboarded) {
-            return res.status(200).json({ onboarded: true })
-        } else {
-            return res.status(200).json({ onboarded: false })
-        }
-    } catch (e) {
-        console.error('[GET /onboarding/onboarding-status] Error while getting onboarded status:', e)
-    }
+onboardingRouter.get('/onboarded-status', onboardingCheck, (req, res) => {
+    res.status(200).send('User is onboarded')
 })
 
 

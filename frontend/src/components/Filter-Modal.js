@@ -1,6 +1,7 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
 
+
 const FilterModal = ({
     modalClassName,
     showFilterForm,
@@ -73,7 +74,6 @@ const FilterModal = ({
                                         </div>
                                     </div>
                                 </div>
-                                {/* Add date pickers for before and after dates */}
                             </form>
                         </div>
                         <div className="modal-footer">

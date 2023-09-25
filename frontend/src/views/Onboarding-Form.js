@@ -57,7 +57,7 @@ const OnboardingForm = () => {
     useEffect(() => {
         const checkStatus = (async () => {
             console.log('use effect entered')
-            await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+            await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
                 .then((response) => {
                     // If user is authorized (logged in and onboarded), redirect to search
                     navigate('/search')
@@ -81,6 +81,7 @@ const OnboardingForm = () => {
 
     return (
         <div className="login-area d-flex align-items-center justify-content-center container-fluid">
+            
             <div className="row justify-content-center">
                 <div className="col-sm-8 my-2">
                     <div className="card">

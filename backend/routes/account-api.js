@@ -4,14 +4,16 @@ const authCheck = require('../auth/auth-check')
 const User = require('../models/userSchema')
 const History = require('../models/historySchema')
 const { deleteQdrantCollection } = require('../utils/embedding-functions')
-const { onboardingQueue } = require('../utils/queue')
+const {formatMongoDate} = require('../utils/unix-to-string')
 
 accountRouter.use(authCheck)
 
+
 accountRouter.get('/', (req, res) => {
     try{
-        const { picture, emailAddress, gmailLinkId, inboxFilter } = req.user
-        const accountInfo = { picture, emailAddress, gmailLinkId, inboxFilter }
+        let { picture, emailAddress, gmailLinkId, inboxFilter, oldestEmail } = req.user
+        oldestEmail = formatMongoDate(oldestEmail)
+        const accountInfo = { picture, emailAddress, gmailLinkId, inboxFilter, oldestEmail }
         res.status(200).json({ accountInfo: accountInfo })
     } catch (e) {
         console.error('[GET /account/] An error occurred while getting account info:', e)

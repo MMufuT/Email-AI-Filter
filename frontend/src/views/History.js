@@ -22,15 +22,14 @@ const History = () => {
             <CustomNavbar />
             <div className="row justify-content-center search-bg">
                 <div className="col-md-4 mt-5">
-                    <h1 className="mb-4" style={{ color: "white"}}>Search History
+                    <h1 className="mb-4" style={{ color: "white" }}>Search History
                         <button
                             className="ms-4 delete-all-button"
-                            //onMouseEnter={(e) => e.target.style.backgroundColor = 'gray'}
-                            // onMouseLeave={(e) => e.target.style.backgroundColor = 'gray'}
                             onClick={() => deleteAllHistory(setHistory)}
                         >
                             Clear History
-                        </button></h1>
+                        </button>
+                    </h1>
 
                     {history.map((item) => (
                         <div key={item._id} className="mb-5 history-item">
