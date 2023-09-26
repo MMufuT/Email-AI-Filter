@@ -8,6 +8,7 @@ const logout = (async (navigate) => {
 
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/logout`, { withCredentials: true })
         .then(() => {
+            console.log(`User Sucecssfully Logged Out`)
             navigate('/')
         })
         .catch((error) => {

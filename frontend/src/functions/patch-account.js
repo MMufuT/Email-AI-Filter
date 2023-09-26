@@ -10,7 +10,7 @@ const patchAccount = (async (account, setAccount, tempGmailLinkId, navigate) => 
                 ...account,
                 gmailLinkId: response.data.newGmailLinkId
             })
-            console.log(response.data)
+            console.log('Changes saved successfully')
         })
         .catch((error) => {
             const errorMessage = error.response.data.mssg

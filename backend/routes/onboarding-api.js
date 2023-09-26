@@ -11,11 +11,10 @@ const { qdrantLock } = require('../utils/mutex')
 const onboardingCheck = require('../auth/onboarding-check')
 
 
-
 onboardingRouter.use(authCheck)
 
 onboardingRouter.post('/loading', async (req, res) => {
-    console.log(`started onboarding for ${req.user.emailAddress}`)
+    // console.log(`started onboarding for ${req.user.emailAddress}`) (Development only)
     if (!req.user) {
         // If req.user is not defined or empty, handle the error
         return res.status(400).json({ error: 'User data not available.' })
@@ -34,7 +33,7 @@ onboardingRouter.post('/loading', async (req, res) => {
             // pause redis queue
             await onboardingQueue.pause()
                 .then(async () => {
-                    console.log(`Queue was paused for: ${emailAddress}`)
+                    // console.log(`Queue was paused for: ${emailAddress}`) (Development only)
                     const gmailApi = await getGmailApiClient(oAuth2Client, currentUser)
                     const emails = await getOnboardingMail(gmailApi, inboxFilter)
                     sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
@@ -46,12 +45,12 @@ onboardingRouter.post('/loading', async (req, res) => {
             // un-pause redis queue b/c we're done using gmail api
             // add user to the end of the queue
             onboardingQueue.resume()
-            console.log('Queue was resumed')
+            // console.log('Queue was resumed') (Development only)
 
 
-            // use mutex key to make to prevent race condition from causing bad gateway error in createColelction
+            // use mutex key to prevent race condition from causing bad gateway error in createColelction
             const release = await qdrantLock.acquire()
-            console.log(`qdrant lock acquired for: ${emailAddress}`)
+            // console.log(`qdrant lock acquired for: ${emailAddress}`) (Development only)
             await createQdrantCollection(emailAddress)
             console.log(`Collection "${emailAddress}" created!`)
 
@@ -62,7 +61,7 @@ onboardingRouter.post('/loading', async (req, res) => {
             }
 
             release()
-            console.log(`qdrant lock released for: ${emailAddress}`)
+            // console.log(`qdrant lock released for: ${emailAddress}`) (Development only)
 
             await User.findByIdAndUpdate(
                 userId,
@@ -72,14 +71,19 @@ onboardingRouter.post('/loading', async (req, res) => {
                     emails: sortedEmails,
                 }
             )
-            onboardingQueue.add('onboarding', { userId: userId }, { removeOnComplete: true, removeOnFail: true })
-            .then(async (job) => {
-                await User.findByIdAndUpdate(userId, {
-                    onboardingQueueId: job.id
-                })
-            })
 
-            console.log(`Finished onboarding for ${emailAddress}`)
+            /*
+            Add user to Bull Queue so remaining onobarding is finished on server
+            I do this so client doesn't have to wait on loading screen for 750 emails to be loaded
+            */
+            onboardingQueue.add('onboarding', { userId: userId }, { removeOnComplete: true, removeOnFail: true })
+                .then(async (job) => {
+                    await User.findByIdAndUpdate(userId, {
+                        onboardingQueueId: job.id
+                    })
+                })
+
+            // console.log(`Finished onboarding for ${emailAddress}`) (Development only)
             res.status(200).send('Success: Onboarding Complete')
 
         } else if (isOnboarded) {
@@ -108,8 +112,9 @@ onboardingRouter.post('/form', async (req, res) => {
         }
 
         await User.findByIdAndUpdate(currentUser.id, { inboxFilter: queryString, gmailLinkId: gmailLinkId })
-        console.log('User updated with filter preferences:', queryString)
-        console.log('User updated with gmail link id:', gmailLinkId)
+        
+        // console.log('User updated with filter preferences:', queryString) (Development Only)
+        // console.log('User updated with gmail link id:', gmailLinkId) (Development Only)
         res.status(200).json({ message: 'Filter preferences updated successfully' })
     } catch (e) {
         console.error('[POST /onboarding/form] Error updating filter preferences or gmail link id:', e)
@@ -122,12 +127,11 @@ onboardingRouter.patch('/reset', async (req, res) => {
     try {
         const userId = req.user.id
         const { emailAddress, onboardingQueueId } = req.user
-        const job = await onboardingQueue.getJob(onboardingQueueId);
-        console.log("testing", onboardingQueueId)
-        console.log(onboardingQueue.getJobCounts())
+        const job = await onboardingQueue.getJob(onboardingQueueId)
+        // console.log(onboardingQueue.getJobCounts()) (Development Only)
 
         if ((job && job.isActive) || (job && job.isPaused)) {
-            console.log(`Job ${onboardingQueueId} is still active`)
+            // console.log(`Job ${onboardingQueueId} is still active`) (Development Only)
             return res.status(503).send('Please wait until your gmail database has finished loading before resetting your filter preferences')
         }
         else {

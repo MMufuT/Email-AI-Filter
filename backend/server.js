@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 });
 
 
-// //middleware logger (development only)
+// //middleware logger (Development only)
 // app.use((req, res, next) => {
 //     console.log(req.originalUrl, req.method);
 //     next();
@@ -50,8 +50,6 @@ app.use((req, res, next) => {
 
 //root route
 app.get('/', (req, res) => {
-    onboardingQueue.empty()
-    console.log('queue cleaned')
     res.status(200).send('Home Page');
 });
 

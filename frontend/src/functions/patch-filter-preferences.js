@@ -13,7 +13,7 @@ const patchFilterPreferences = (async (navigate) => {
         withCredentials: true
     })
         .then((response) => {
-            console.log(response)
+            console.log('Preferences reset successfully')
             navigate('/onboarding/form')
         })
         .catch((error) => {

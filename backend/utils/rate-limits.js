@@ -2,7 +2,6 @@ const Bottleneck = require('bottleneck')
 
 // in calls/second
 const onboardingRateLimit = 35
-const dbUpdateRateLimit = 10
 
 // maxConcurrent: # of calls at the same time
 // minTime: Time in ms between each API call

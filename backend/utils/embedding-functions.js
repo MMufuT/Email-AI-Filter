@@ -2,7 +2,6 @@ require('dotenv').config()
 const { Configuration, OpenAIApi } = require('openai')
 const { QdrantClient } = require('@qdrant/js-client-rest')
 const { v4: uuidv4 } = require('uuid')
-const { onboardingQueue } = require('./queue')
 
 const openai = new OpenAIApi(new Configuration({
   apiKey: process.env.OPENAI_API_KEY
@@ -13,11 +12,13 @@ const qdrant = new QdrantClient({
   apiKey: process.env.QDRANT_API_KEY,
 })
 
+// Parses Email Address from the Email format that Gmail API returns
 const extractEmailAddress = async (emailString) => {
   const match = emailString.match(/<([^>]+)>/)
   return match && match[1] ? match[1] : emailString
 }
 
+// Creates an embedding (1536 unit array) for the input text using OpenAI API
 const createEmbedding = async (input) => {
   return await openai.createEmbedding({
     model: 'text-embedding-ada-002',
@@ -25,7 +26,7 @@ const createEmbedding = async (input) => {
   })
     .then((response) => { return response.data.data[0].embedding })
     .catch((error) => {
-      console.log('Error occured while creating Open AI embedding: ' + error)
+      console.error('Error occured while creating Open AI embedding:', error)
     })
 }
 
@@ -75,6 +76,7 @@ const deleteQdrantCollection = async (emailAddress) => {
   return true
 }
 
+// Used by POST /search API call. Takes user query and searches Qdrant database for similar emails
 const getSearchResults = async (userEmail, query, senderEmailAddress, range) => {
 
   const currentUnixTime = Math.floor(Date.now() / 1000)

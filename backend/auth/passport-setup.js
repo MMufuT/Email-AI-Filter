@@ -21,7 +21,7 @@ passport.use(
         callbackURL: '/auth/google/redirect'
     }, (accessToken, refreshToken, profile, done) => {
         // passport callback function
-        console.log(profile)
+        // console.log(profile) (Development only)
         const emailAddress = profile.emails[0].value
 
         // check if user exists in database
@@ -29,8 +29,8 @@ passport.use(
 
             if (currentUser) {
                 // if user already exists
-                console.log('\nuser alredy exists: ' + currentUser.username + '\n')
-                console.log(refreshToken)
+                // console.log('\nuser alredy exists: ' + currentUser.username + '\n') (Development only)
+                // console.log(refreshToken) (Development only)
                 currentUser.accessToken = accessToken
                 currentUser.refreshToken = refreshToken
                 done(null, currentUser)
@@ -46,7 +46,7 @@ passport.use(
                     refreshToken: refreshToken,
                     isOnboarded: false,
                 }).then((createdUser) => {
-                    console.log('\nnew user created: ' + createdUser + '\n')
+                    // console.log('\nnew user created: ' + createdUser + '\n') (Development only) 
                     done(null, createdUser)
                 })
 
@@ -54,7 +54,7 @@ passport.use(
         })
 
 
-        console.log('passport callback function fired')
+        // console.log('passport callback function fired') (Development only)
 
 
     })

@@ -21,7 +21,7 @@ export const deleteAllHistory = ((setHistory) => {
     .then((response) => {
         setHistory([])
         console.log(`History was successfully cleared:`)
-        console.log(response)
+        // console.log(response) (Development only)
     })
     .catch((error) => {
         console.log(error)

@@ -41,10 +41,10 @@ const OnboardingForm = () => {
         event.preventDefault()
         // The finishedForm object will contain the formData
         const finishedForm = formData
-        console.log(finishedForm)
+        // console.log(finishedForm) (Development Only)
         axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/form`, finishedForm, { withCredentials: true })
             .then((response) => {
-                console.log('Form details have been successfully uploaded to database')
+                console.log('Form details have been successfully uploaded')
                 navigate('/onboarding/loading')
             })
             .catch((error) => {
@@ -56,7 +56,6 @@ const OnboardingForm = () => {
     // Auth check using useEffect
     useEffect(() => {
         const checkStatus = (async () => {
-            console.log('use effect entered')
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
                 .then((response) => {
                     // If user is authorized (logged in and onboarded), redirect to search

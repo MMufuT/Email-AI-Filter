@@ -11,11 +11,10 @@ const OnboardingLoading = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     useEffect(() => {
-        console.log('use effect entered')
         const checkStatus = (async () => {
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
                 .then((response) => {
-                    console.log('User is authorized')
+                    // console.log('User is authorized') (Development only)
                     // If user is authorized (logged in), no action needed
                 })
                 .catch((error) => {

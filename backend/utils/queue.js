@@ -10,7 +10,7 @@ const getOAuthClient = require('./get-oauth')
 const waitForEmptyLimiter = ((limiter, done) => {
     new Promise((resolve) => {
         limiter.on("empty", () => {
-            console.log("Rate limiter is empty.")
+            // console.log("Rate limiter is empty.") (Development only)
             done()
             resolve()
         })
@@ -26,14 +26,14 @@ const onboardingQueue = new Queue('onboarding-queue', {
 })
 
 onboardingQueue.process('onboarding', async (job, done) => {
-    console.log(`Job ${job.id} started in onboarding-queue.`)
-    console.log(onboardingRateLimiter.counts())
+    // console.log(`Job ${job.id} started in onboarding-queue.`) (Development only)
+    // console.log(onboardingRateLimiter.counts()) (Development only)
 
     // Process the job for onboarding tasks
 
     // user will have access and refresh tokens. get gmail api client with those
     // set ratelimiter on gmail api to 35 req/second
-    // get last 4500 emails
+    // get last 750 emails
 
     /*
     For each email...
@@ -53,10 +53,10 @@ onboardingQueue.process('onboarding', async (job, done) => {
         const emails = user.emails
         let oldestEmailDate = emails[emails.length - 1].sentDate
         oldestEmailDate = Math.floor(oldestEmailDate.getTime() / 1000) // converting to ISO format
-        console.log(oldestEmailDate)
+        // console.log(oldestEmailDate) (Development only)
 
         const filter = user.inboxFilter + ` before:${oldestEmailDate}`
-        console.log(`Rest of emails loaded with this filter: ${filter}`)
+        // console.log(`Rest of emails loaded with this filter: ${filter}`) (Development only)
 
         // await the completion of loadMailToDB
         await loadMailToDB(gmailApi, filter, userId, emailAddress)
@@ -71,7 +71,7 @@ onboardingQueue.process('onboarding', async (job, done) => {
         waitForEmptyLimiter(onboardingRateLimiter, done)
     } catch (error) {
         // Job failed, pass the error to done callback
-        console.log(`Error here ${error}`)
+        console.error('Error during Bull Queue onboarding process:', error)
         done(error)
     }
 })

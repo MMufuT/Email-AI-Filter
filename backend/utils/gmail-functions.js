@@ -1,19 +1,14 @@
 require('dotenv').config()
 const { google } = require('googleapis')
-const { Configuration, OpenAIApi } = require('openai')
-// const Bottleneck = require('bottleneck')
 const User = require('../models/userSchema')
 const { addEmailtoQdrant } = require('./embedding-functions')
 const { promisify } = require('util')
 const { onboardingRateLimiter } = require('./rate-limits')
 
-// const gmailLimiter = new Bottleneck({
-//   reservoir: 35, // Number of requests allowed per interval
-//   reservoirRefreshAmount: 35, // Number of requests to replenish the reservoir every interval
-//   reservoirRefreshInterval: 1000, // Interval in milliseconds to replenish the reservoir
-//   maxConcurrent: 1, // Number of concurrent requests allowed
-// })
-
+/*
+This function checks if the user's access token is expiring soon
+If the token is expiring soon, this function will refresh the token
+*/
 const validateAccess = async (oAuth2Client, user) => {
   if (oAuth2Client.isTokenExpiring()) {
     oAuth2Client.setCredentials({
@@ -33,6 +28,10 @@ const getGmailApiClient = async (oAuth2Client, user) => {
   }
 }
 
+/*
+This function gets the the last 250 emails from the client during the 
+POST /onboarding/loading API call.
+*/
 const getOnboardingMail = (gmail, filter) => {
   return new Promise((resolve, reject) => {
     gmail.users.messages.list(
@@ -108,6 +107,7 @@ const getOnboardingMail = (gmail, filter) => {
   })
 }
 
+// Sorts the emails fetched from Gmail API from newest(0) to oldest(length-1)
 const newToOldMailSort = async (emails) => {
   // latest -> oldest
   const newMail = await Promise.all(
@@ -123,6 +123,11 @@ const newToOldMailSort = async (emails) => {
   return newMail
 }
 
+/*
+This function gets the remaining 750 emails from the client in the Bull Queue process
+after the user finished onboarding. There are 1000 emails loaded (250 onnboarding + 750 remaining)
+in the user's database.
+*/
 const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = null) => {
   let batchesLoaded = 0 // 750 emails will be loaded in 3 batches (3 x 250 emails)
   const getEmailAsync = promisify(gmail.users.messages.get.bind(gmail.users.messages))
@@ -175,7 +180,7 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
 
   return new Promise(async (resolve, reject) => {
     const processNextPage = async (pageToken) => {
-      console.log(pageToken)
+      // console.log(pageToken) (Development only)
       try {
         const response = await listMessagesAsync({
           userId: 'me',
@@ -200,11 +205,11 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
         batchesLoaded++
         emailsLoaded = batchesLoaded * 250
         if (nextPageToken && batchesLoaded < 3) {
-          console.log(`loaded: ${emailsLoaded}`)
-          console.log(onboardingRateLimiter.counts())
+          // console.log(`loaded: ${emailsLoaded}`) (Development only)
+          // console.log(onboardingRateLimiter.counts()) (Development only)
           processNextPage(nextPageToken)
         } else {
-          console.log(`Finished adding remaining 750 emails to worker queue user with ID: ${userId}`)
+          // console.log(`Finished adding remaining 750 emails to worker queue user with ID: ${userId}`) (Development only)
           resolve()
           return
         }
