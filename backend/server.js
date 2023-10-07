@@ -48,13 +48,6 @@ app.use((req, res, next) => {
 //     next();
 // });
 
-//root route
-app.get('/', (req, res) => {
-    res.status(200).send('Home Page');
-});
-
-
-
 //setting up routes
 const historyRoutes = require('./routes/history-api')
 const searchRoutes = require('./routes/search-api')

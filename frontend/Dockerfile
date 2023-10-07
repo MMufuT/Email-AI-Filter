@@ -1,9 +1,8 @@
 # Use an official Node.js runtime as a parent image
-# This shit is so wrong, fix later
-FROM node:20
+FROM node:20-alpine3.18
 
 # Set the working directory in the container
-WORKDIR /app/frontend
+WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
@@ -15,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port your app will run on (if needed)
-EXPOSE 8000
+EXPOSE 3000
 
 # Command to run when the container starts
 CMD ["npm", "start"]

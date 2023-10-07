@@ -1,9 +1,27 @@
 version: '3'
 services:
-  frontend:
-    build: './frontend'
-    ports: '3000:3000'
   backend:
-    build: './backend'
-    ports: '8000:8000'
-
+    build:
+      context: './backend'
+      dockerfile: Dockerfile
+    image: gmail-ai-filter-backend-image:1.0
+    container_name: gmail-ai-filter-backend
+    ports:
+      - '8000:8000'
+    networks:
+      - gmail-ai-filter-network
+  frontend:  
+    build:
+      context: './frontend'
+      dockerfile: Dockerfile
+    image: gmail-ai-filter-frontend-image:1.0
+    container_name: gmail-ai-filter-frontend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    networks:
+      - gmail-ai-filter-network
+networks:
+  gmail-ai-filter-network:
+    driver: bridge
