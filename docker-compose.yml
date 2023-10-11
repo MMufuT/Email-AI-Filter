@@ -4,34 +4,22 @@ services:
     build:
       context: './backend'
       dockerfile: Dockerfile
-    image: mmufut/gmail-ai-filter:backend-1.0
     container_name: backend
     ports:
       - '8000:8000'
+    volumes:
+      - ./backend:/backend
     networks:
       - gmail-ai-filter-network
   frontend:
     build:
       context: './frontend'
       dockerfile: Dockerfile
-    image: mmufut/gmail-ai-filter:frontend-1.0
     container_name: frontend
     ports:
       - '3000:3000'
-    depends_on:
-      - backend
-    networks:
-      - gmail-ai-filter-network
-  nginx:
-    build:
-      context: './nginx'
-      dockerfile: Dockerfile
-    container_name: nginx
-    ports:
-      - '80:80'
-    depends_on:
-      - frontend
-      - backend
+    volumes:
+      - ./frontend:/frontned
     networks:
       - gmail-ai-filter-network
 networks:

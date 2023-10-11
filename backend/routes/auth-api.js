@@ -28,7 +28,8 @@ auth_router.get('/login-status', authCheck, (req, res) => {
 //auth with google
 auth_router.get('/google', passport.authenticate('google', {
     scope: scopes,
-    accessType: 'offline'
+    accessType: 'offline',
+    prompt: 'consent'
 }))
 
 //callback route for google to redirect to

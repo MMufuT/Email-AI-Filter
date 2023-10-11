@@ -15,6 +15,7 @@ const passportSetup = require('./auth/passport-setup');
 //express app
 const app = express();
 const mongoose = require('mongoose');
+const apiRouter = express.Router();
 
 // setting up cross-origin resource sharing
 app.use(cors({
@@ -54,12 +55,13 @@ const searchRoutes = require('./routes/search-api')
 const authRoutes = require('./routes/auth-api')
 const onboardingRoutes = require('./routes/onboarding-api')
 const accountRouter = require('./routes/account-api')
-app.use('/history', historyRoutes)
-app.use('/search', searchRoutes)
-app.use('/onboarding', onboardingRoutes)
-app.use('/account', accountRouter)
-app.use('/auth', authRoutes)
+apiRouter.use('/history', historyRoutes)
+apiRouter.use('/search', searchRoutes)
+apiRouter.use('/onboarding', onboardingRoutes)
+apiRouter.use('/account', accountRouter)
+apiRouter.use('/auth', authRoutes)
 
+app.use('/api', apiRouter)
 
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)

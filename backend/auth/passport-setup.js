@@ -18,10 +18,13 @@ passport.use(
         //options for the strategy
         clientID: process.env.OAUTH_CLIENT_ID,
         clientSecret: process.env.OAUTH_CLIENT_SECRET,
-        callbackURL: '/auth/google/redirect'
+        callbackURL: `${process.env.BACKEND_URL}/auth/google/redirect`
     }, (accessToken, refreshToken, profile, done) => {
         // passport callback function
         // console.log(profile) (Development only)
+        console.log('Entered Google Strategy')
+        console.log('Access Token:', accessToken)
+        console.log('Refresh Token:', refreshToken)
         const emailAddress = profile.emails[0].value
 
         // check if user exists in database
