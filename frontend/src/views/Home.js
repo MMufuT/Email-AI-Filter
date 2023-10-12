@@ -12,20 +12,23 @@ import linkedInButton from '../images/linkedin.png'
 const Home = () => {
 
   document.body.style.overflow = 'hidden';
+  useEffect(() => {
+    document.title = "Log in | Gmail AI Filter"
+  }, [])
 
   return (
 
     <div className="container-fluid vh-100 home-bg">
-      
+
       {/* Header Bar */}
       <div className="row justify-content-center align-items-center" style={{ background: "#BABABA", boxShadow: "0px 0px 4px 10px rgba(0, 0, 0, 0.2)", zIndex: "2", position: "relative" }}>
         <img src={magAiLogo} alt="magAiLogo" className="magAiLogo-home col-md-4 my-3" style={{ outline: "solid red 0px" }} />
         <h2 className="col-md-2 mt-2 patrick-font" style={{ color: "white" }}>Gmail AI Filter</h2>
       </div>
-      
+
       {/* Main Content */}
       <div className="row justify-content-center align-items-center">
-        
+
         {/* Left Side (Info) */}
         <div className="col-md-7" style={{ outline: "solid red 0px" }}>
           <div className="row d-flex justify-content-center">
@@ -93,13 +96,19 @@ const Home = () => {
                     </a>
                   </div>
                 </div>
+                <hr className="my-3 mx-5" style={{ borderColor: "black", borderWidth: "3px" }} />
+                <div className="row d-flex justify-content-center">
+                  <div className="col-md-12 justify-content-center d-flex" style={{ outline: "0px solid red" }}>
+                  <a href="/privacy-policy" style={{ color: "#5F676D" }} target="_blank">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href="/cookies" style={{ color: "#5F676D" }} target="_blank">Cookie Policy</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
       </div>
-      
+
     </div>
   )
 }

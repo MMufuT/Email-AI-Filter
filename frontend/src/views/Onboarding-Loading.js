@@ -11,6 +11,7 @@ const OnboardingLoading = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     useEffect(() => {
+        document.title = "Loading Database | Gmail AI Filter"
         const checkStatus = (async () => {
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
                 .then((response) => {

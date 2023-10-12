@@ -11,17 +11,6 @@ services:
       - ./backend:/backend
     networks:
       - gmail-ai-filter-network
-  frontend:
-    build:
-      context: './frontend'
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./frontend:/frontned
-    networks:
-      - gmail-ai-filter-network
 networks:
   gmail-ai-filter-network:
     driver: bridge

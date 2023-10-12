@@ -54,6 +54,7 @@ const Search = () => {
     }
 
     useEffect(() => {
+        document.title = "Search | Gmail AI Filter"
         checkLoginStatus(navigate)
     })
 

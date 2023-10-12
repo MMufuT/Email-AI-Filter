@@ -19,7 +19,7 @@ const CustomNavbar = () => {
         <Navbar.Brand className="col-5 mx-3">
           <img src={magGlass} alt="magGlass" className="magGlass-nav ms-5 me-2" />
           <text className="patrick-font" style={{fontSize:"125%"}}>
-            Gmail AI SmartFilter
+            Gmail AI Filter
           </text>
         </Navbar.Brand>
         <Nav className="me-auto ms-2">

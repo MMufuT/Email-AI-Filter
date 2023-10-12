@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM --platform=linux/amd64 node:20-alpine3.18
+FROM --platform=linux/amd64 node:20-alpine3.18 as build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,7 +14,8 @@ RUN npm install
 COPY . .
 
 # Expose the port your app will run on (if needed)
-EXPOSE 3000
+# EXPOSE 3000
 
 # Command to run when the container starts
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
+RUN npm run build
