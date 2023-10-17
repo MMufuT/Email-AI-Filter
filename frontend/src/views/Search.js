@@ -66,8 +66,8 @@ const Search = () => {
                 <div className="col" style={{ backgroundColor: '#202124', minHeight: '100px' }}></div>
             </div>
 
-            <div className="row justify-content-center search-bg">
-                <div className="col-md-6 mt-5">
+            <div className="row justify-content-center search-bg d-flex align-items-center">
+        <div className="col-md-6 mt-5 d-flex flex-column align-items-center">
                     <img src={aiLogo} alt="Logo" className="search-logo-image" />
                     <div className="input-group">
                         <input

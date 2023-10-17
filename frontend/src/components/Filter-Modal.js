@@ -36,7 +36,7 @@ const FilterModal = ({
                             <form>
                                 <div className="mb-3">
                                     <label htmlFor="sender" className="form-label">
-                                        Sender Email Address:
+                                        Sender Email Address:&nbsp;&nbsp;
                                     </label>
                                     <input
                                         type="text"
@@ -50,7 +50,7 @@ const FilterModal = ({
                                     <div className="col-sm-6">
                                         <div className="mb-3">
                                             <label htmlFor="afterDate" className="form-label">
-                                                Sent After:
+                                                Sent After:&nbsp;&nbsp;
                                             </label>
                                             <DatePicker
                                                 selected={tempSelectedAfterDate}
@@ -63,7 +63,7 @@ const FilterModal = ({
                                     <div className="col-sm-6">
                                         <div className="mb-3">
                                             <label htmlFor="beforeDate" className="form-label">
-                                                Sent Before:
+                                                Sent Before:&nbsp;&nbsp;
                                             </label>
                                             <DatePicker
                                                 selected={tempSelectedBeforeDate}

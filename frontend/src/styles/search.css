@@ -58,7 +58,7 @@
 .search-logo-image {
   max-width: 250px;
   height: auto;
-  margin-left: 34%;
+  /* margin-left: 34%; */
   margin-bottom: 5.4%;
 }
 
@@ -74,4 +74,18 @@
   margin-top: 4%;
   margin-left: 3%;
   width: 19%;
+}
+
+@media (max-width: 768px) {
+  .search-filter-popup {
+    margin: 50% auto; /* Adjust for smaller screens, if necessary */
+    width: 95%; /* Adjust the width as needed */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .search-filter-popup {
+    margin: 65% auto; /* Adjust for iPad-sized screens, as needed */
+    width: 80%; /* Adjust the width as needed */
+  }
 }

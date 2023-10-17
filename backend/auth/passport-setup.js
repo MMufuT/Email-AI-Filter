@@ -22,10 +22,6 @@ passport.use(
     }, (accessToken, refreshToken, profile, done) => {
         // passport callback function
         // console.log(profile) (Development only)
-        console.log('Entered Google Strategy')
-        console.log('Access Token:', accessToken)
-        console.log('Refresh Token:', refreshToken)
-        const emailAddress = profile.emails[0].value
 
         // check if user exists in database
         User.findOne({ googleId: profile.id }).then(async (currentUser) => {

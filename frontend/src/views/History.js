@@ -22,7 +22,7 @@ const History = () => {
         <div className="container-fluid search-bg vh-100">
             <CustomNavbar />
             <div className="row justify-content-center search-bg">
-                <div className="col-md-4 mt-5">
+                <div className="col-sm-4 mt-5">
                     <h1 className="mb-4" style={{ color: "white" }}>Search History
                         <button
                             className="ms-4 delete-all-button"

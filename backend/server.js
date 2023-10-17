@@ -62,6 +62,7 @@ apiRouter.use('/account', accountRouter)
 apiRouter.use('/auth', authRoutes)
 
 app.use('/api', apiRouter)
+// app.use('/', apiRouter) - Dev
 
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)

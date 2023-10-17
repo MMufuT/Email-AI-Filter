@@ -19,6 +19,20 @@
     width: 19%;
   }
 
+  @media (max-width: 768px) {
+    .results-filter-popup {
+      margin: 48% auto; /* Adjust for smaller screens, if necessary */
+      width: 95%; /* Adjust the width as needed */
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .results-filter-popup {
+      margin: 18% auto; /* Adjust for iPad-sized screens, as needed */
+      width: 80%; /* Adjust the width as needed */
+    }
+  }
+
   .results-results-filter {
     color:gray;
     margin-left:14.5%
