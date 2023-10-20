@@ -14,7 +14,7 @@ const History = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        document.title = "History | Gmail AI Filter"
+        document.title = "History | Email AI Filter"
         getHistory(navigate, setHistory)
     }, [])
 

@@ -55,7 +55,7 @@ const OnboardingForm = () => {
 
     // Auth check using useEffect
     useEffect(() => {
-        document.title = "Onboarding Form | Gmail AI Filter"
+        document.title = "Onboarding Form | Email AI Filter"
         const checkStatus = (async () => {
             await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
                 .then((response) => {

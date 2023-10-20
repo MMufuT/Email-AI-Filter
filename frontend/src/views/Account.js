@@ -40,7 +40,7 @@ const Account = () => {
     }
 
     useEffect(() => {
-        document.title = "Account | Gmail AI Filter"
+        document.title = "Account | Email AI Filter"
         getAccount(navigate, setAccount, setTempGmailLinkId)
     }, [])
 

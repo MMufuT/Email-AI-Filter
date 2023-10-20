@@ -64,7 +64,7 @@ const SearchResults = () => {
   }
 
   useEffect(() => {
-    document.title = `${pageQuery} | Gmail AI Filter`
+    document.title = `${pageQuery} | Email AI Filter`
     postSearch(navigate, location, setResults, setSearchConfig)
   }, [location.search, navigate])
 

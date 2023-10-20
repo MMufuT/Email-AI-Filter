@@ -19,7 +19,7 @@ const Home = () => {
 
   // document.body.style.overflow = 'hidden';
   useEffect(() => {
-    document.title = "Log in | Gmail AI Filter"
+    document.title = "Log in | Email AI Filter"
     setHeaderHeight(headerRef.current.offsetHeight);
   }, [])
 
@@ -30,7 +30,7 @@ const Home = () => {
       {/* Header Bar */}
       <div className="row justify-content-center align-items-center" ref={headerRef} style={{ background: "#BABABA", bosmhadow: "0px 0px 4px 10px rgba(0, 0, 0, 0.2)", zIndex: "2", position: "relative" }}>
         <img src={magAiLogo} alt="magAiLogo" className="magAiLogo-home col-sm-4 my-3" style={{ outline: "solid red 0px" }} />
-        <h2 className="col-sm-2 mt-2 patrick-font" style={{ color: "white" }}>Gmail AI Filter</h2>
+        <h2 className="col-sm-2 mt-2 patrick-font" style={{ color: "white" }}>Email AI Filter</h2>
       </div>
 
       {/* Main Content */}

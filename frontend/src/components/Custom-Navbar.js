@@ -19,7 +19,7 @@ const CustomNavbar = () => {
         <Navbar.Brand className="col-5 mx-3">
           <img src={magGlass} alt="magGlass" className="magGlass-nav ms-2 me-2" />
           <text className="patrick-font" style={{fontSize:"125%"}}>
-            Gmail AI Filter
+            Email AI Filter
           </text>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
