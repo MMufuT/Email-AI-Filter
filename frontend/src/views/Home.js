@@ -2,12 +2,25 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.js'
 import '../styles/home.css'
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+
+// import required modules
+import { EffectCoverflow, Pagination } from 'swiper/modules';
 import magAiLogo from '../images/mag-ai-logo.png'
 import qdrantLogo from '../images/qdrant-logo.png'
 import openAiLogo from '../images/open-ai-logo.png'
 import githubButton from '../images/github.png'
 import linkedInButton from '../images/linkedin.png'
 import googleSignInButton from '../images/google-sign-in-button.png'
+import home from '../images/home.png'
+import search from '../images/search.png'
+import account from '../images/account.png'
+import history from '../images/history.png'
 
 
 const Home = () => {
@@ -25,7 +38,7 @@ const Home = () => {
 
   return (
 
-    <div className="container-fluid vh-100 home-bg d-flex flex-column">
+    <div className="container-fluid home-bg d-flex flex-column">
 
       {/* Header Bar */}
       <div className="row justify-content-center align-items-center" ref={headerRef} style={{ background: "#BABABA", bosmhadow: "0px 0px 4px 10px rgba(0, 0, 0, 0.2)", zIndex: "2", position: "relative" }}>
@@ -34,7 +47,7 @@ const Home = () => {
       </div>
 
       {/* Main Content */}
-      <div className="row justify-content-center align-items-center" style={{height: `calc(100vh - ${headerHeight}px)`}}>
+      <div className="row justify-content-center align-items-center" style={{ height: `72vh` }}>
 
         {/* Left Side (Info) */}
         <div className="col-sm-7" style={{ outline: "solid red 0px" }}>
@@ -66,7 +79,7 @@ const Home = () => {
         </div>
 
         {/* Right Side */}
-        <div className="col-sm-5 row d-flex align-items-center flex-column" style={{ outline: "solid red 0px"}}>
+        <div className="col-sm-5 row d-flex align-items-center flex-column" style={{ outline: "solid red 0px" }}>
           <div className="row d-flex justify-content-center flex">
             <div className="card col-sm-8 login-card" style={{ backgroundColor: "#BABABA" }}>
               <div className="card-body">
@@ -74,9 +87,9 @@ const Home = () => {
                   <h3 className="text-center patrick-font">Log In To Your Account</h3>
                 </div>
                 <div className="row d-flex justify-content-center">
-                  <div className="col-sm-8 justify-content-center d-flex" style={{outline:"0px solid red"}}>
+                  <div className="col-sm-8 justify-content-center d-flex" style={{ outline: "0px solid red" }}>
                     <a href={`${process.env.REACT_APP_SERVER_URL}/auth/google`}>
-                        <img src={googleSignInButton} style={{height:"50px", width:"auto"}}/>
+                      <img src={googleSignInButton} style={{ height: "50px", width: "auto" }} />
                     </a>
                   </div>
                 </div>
@@ -100,9 +113,9 @@ const Home = () => {
                   </div>
                 </div>
                 <hr className="mt-4 mb-2 mx-5" style={{ borderColor: "black", borderWidth: "3px" }} />
-                <div className="row d-flex justify-content-center" style={{fontSize:"14px"}}>
+                <div className="row d-flex justify-content-center" style={{ fontSize: "14px" }}>
                   <div className="col-sm-12 justify-content-center d-flex" style={{ outline: "0px solid red" }}>
-                  <a href="/privacy-policy" style={{ color: "#5F676D" }} target="_blank">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href="/cookies" style={{ color: "#5F676D" }} target="_blank">Cookie Policy</a>
+                    <a href="/privacy-policy" style={{ color: "#5F676D" }} target="_blank">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href="/cookies" style={{ color: "#5F676D" }} target="_blank">Cookie Policy</a>
                   </div>
                 </div>
               </div>
@@ -110,6 +123,44 @@ const Home = () => {
           </div>
         </div>
 
+      </div>
+      <div className="row justify-content-center align-items-center" style={{ height: "50vh" }}>
+        <h1 className="patrick-font" style={{ color: "white" }}>How It Works</h1>
+      </div>
+      <div className="row justify-content-center align-items-center" >
+        <Swiper
+          effect={'coverflow'}
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView={2}
+          coverflowEffect={{
+            rotate: 50,
+            stretch: 25,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+          }}
+          pagination={true}
+          modules={[EffectCoverflow, Pagination]}
+          className="mySwiper"
+        >
+          <SwiperSlide className="justify-content-center d-flex">
+            <img className="slide-card" src={home} />
+          </SwiperSlide>
+          <SwiperSlide className="justify-content-center d-flex">
+            <img className="slide-card" src={search} />
+          </SwiperSlide>
+          <SwiperSlide className="justify-content-center d-flex">
+            <img className="slide-card" src={history} />
+          </SwiperSlide>
+          <SwiperSlide className="justify-content-center d-flex">
+            <img className="slide-card" src={account} />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+      {/* create a footer with copyright email ai filter */}
+      <div className="row" style={{ background: "#BABABA", height: "5vh" }}>
+        <h5 className="patrick-font justify-content-center align-items-center d-flex" style={{ color: "white" }}>© {new Date().getFullYear()} Email AI Filter. All rights reserved.</h5>
       </div>
 
     </div>
