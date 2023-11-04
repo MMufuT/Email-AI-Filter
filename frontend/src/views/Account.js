@@ -62,7 +62,7 @@ const Account = () => {
                         <div className=" justify-content-start mt-5">
                             <text style={{ color: "#a7aab0" }}>Inbox Filters:&nbsp;</text>
                             <text style={{ color: "white" }}>{account.inboxFilter}</text><br/>
-                            <text style={{ color: "#a7aab0" }}>Oldest Email Filter Database:&nbsp;</text>
+                            <text style={{ color: "#a7aab0" }}>Oldest Email In Database:&nbsp;</text>
                             <text style={{ color: "white" }}>{account.oldestEmail}</text>
                         </div>
                         <div className="d-flex justify-content-end mt-3 mb-3">

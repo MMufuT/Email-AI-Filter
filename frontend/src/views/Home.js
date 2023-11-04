@@ -10,7 +10,7 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
 // import required modules
-import { EffectCoverflow, Pagination } from 'swiper/modules';
+import { EffectCoverflow, Pagination, Keyboard, Mousewheel } from 'swiper/modules';
 import magAiLogo from '../images/mag-ai-logo.png'
 import qdrantLogo from '../images/qdrant-logo.png'
 import openAiLogo from '../images/open-ai-logo.png'
@@ -21,6 +21,8 @@ import home from '../images/home.png'
 import search from '../images/search.png'
 import account from '../images/account.png'
 import history from '../images/history.png'
+import onboardingDiagram from '../images/onboarding-diagram.png'
+import searchDiagram from '../images/search-diagram.png'
 
 
 const Home = () => {
@@ -46,8 +48,11 @@ const Home = () => {
         <h2 className="col-sm-2 mt-2 patrick-font" style={{ color: "white" }}>Email AI Filter</h2>
       </div>
 
+      {/* Empty Space*/}
+      <div className="row justify-content-center align-items-center" style={{ height: `${headerHeight}px` }}></div>
+
       {/* Main Content */}
-      <div className="row justify-content-center align-items-center" style={{ height: `72vh` }}>
+      <div className="row justify-content-center align-items-center mb-5">
 
         {/* Left Side (Info) */}
         <div className="col-sm-7" style={{ outline: "solid red 0px" }}>
@@ -95,7 +100,7 @@ const Home = () => {
                 </div>
                 <hr className="my-3 mx-5" style={{ borderColor: "black", borderWidth: "3px" }} />
                 <div className="row justify-content-center d-flex">
-                  <div className=" col-sm-7 justify-content-between d-flex">
+                  <div className="col-sm-7 justify-content-between d-flex">
                     <a href="https://github.com/MMufuT" target="_blank" >
                       <img style={{ height: "30px", width: "auto" }} src={githubButton} />
                     </a>
@@ -122,43 +127,74 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Demo */}
+      <div className="row justify-content-center align-items-center" style={{ outline: "solid red 0px" }}>
+
+        <div className="d-flex justify-content-center ">
+
+          <div className="card col-sm-10 login-card mb-5" style={{ backgroundColor: "#BABABA" }}>
+            <div className="row mb-3">
+              <div className="justify-content-center d-flex mt-5">
+                <h1 className="patrick-font text-center" style={{ color: "black", fontSize: "300%" }}>How It Works</h1>
+              </div>
+              <div className="mb-5">
+                <a className="justify-content-center d-flex" href="https://bit.ly/49dyQgL" target="_blank">
+                  <h3 className="patrick-font text-center" style={{ color: "black", fontSize: "300%" }}>Read more about Email AI Filter here</h3>
+                </a>
+              </div>
+            </div>
+            <div className="row justify-content-center align-items-center d-flex mb-5" >
+              <div className="row justify-content-center align-items-center mb-5 col-sm-12" >
+
+                <Swiper
+                  effect={'coverflow'}
+                  grabCursor={true}
+                  centeredSlides={true}
+                  slidesPerView={2}
+                  keyboard={{ enabled: true }}
+                  mousewheel={true}
+                  coverflowEffect={{
+                    rotate: 50,
+                    stretch: 25,
+                    depth: 100,
+                    modifier: 1,
+                    slideShadows: true,
+                  }}
+                  pagination={true}
+                  modules={[EffectCoverflow, Pagination, Keyboard, Mousewheel]}
+                  className="mySwiper"
+                >
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={onboardingDiagram} />
+                  </SwiperSlide>
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={searchDiagram} />
+                  </SwiperSlide>
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={home} />
+                  </SwiperSlide>
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={search} />
+                  </SwiperSlide>
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={history} />
+                  </SwiperSlide>
+                  <SwiperSlide className="justify-content-center d-flex">
+                    <img className="slide-card" src={account} />
+                  </SwiperSlide>
+                </Swiper>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
-      <div className="row justify-content-center align-items-center" style={{ height: "50vh" }}>
-        <h1 className="patrick-font" style={{ color: "white" }}>How It Works</h1>
-      </div>
-      <div className="row justify-content-center align-items-center" >
-        <Swiper
-          effect={'coverflow'}
-          grabCursor={true}
-          centeredSlides={true}
-          slidesPerView={2}
-          coverflowEffect={{
-            rotate: 50,
-            stretch: 25,
-            depth: 100,
-            modifier: 1,
-            slideShadows: true,
-          }}
-          pagination={true}
-          modules={[EffectCoverflow, Pagination]}
-          className="mySwiper"
-        >
-          <SwiperSlide className="justify-content-center d-flex">
-            <img className="slide-card" src={home} />
-          </SwiperSlide>
-          <SwiperSlide className="justify-content-center d-flex">
-            <img className="slide-card" src={search} />
-          </SwiperSlide>
-          <SwiperSlide className="justify-content-center d-flex">
-            <img className="slide-card" src={history} />
-          </SwiperSlide>
-          <SwiperSlide className="justify-content-center d-flex">
-            <img className="slide-card" src={account} />
-          </SwiperSlide>
-        </Swiper>
-      </div>
-      {/* create a footer with copyright email ai filter */}
+
+      {/* Intellectual Property Footer */}
       <div className="row" style={{ background: "#BABABA", height: "5vh" }}>
         <h5 className="patrick-font justify-content-center align-items-center d-flex" style={{ color: "white" }}>© {new Date().getFullYear()} Email AI Filter. All rights reserved.</h5>
       </div>
