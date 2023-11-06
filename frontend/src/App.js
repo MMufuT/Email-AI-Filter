@@ -12,6 +12,7 @@ import Search from './views/Search'
 import SearchResults from './views/Search-Results'
 import History from './views/History'
 import Account from './views/Account'
+import GoogleAPIPolicy from './views/Google-API-Policy.js'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/search/results" element={<SearchResults />} />
         <Route path="/history" element={<History />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/google-api-user-data-policy" element={<GoogleAPIPolicy />} />
       </Routes> 
     </Router>
   )

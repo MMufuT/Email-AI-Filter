@@ -123,6 +123,11 @@ const Home = () => {
                     <a href="/privacy-policy" style={{ color: "#5F676D" }} target="_blank">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href="/cookies" style={{ color: "#5F676D" }} target="_blank">Cookie Policy</a>
                   </div>
                 </div>
+                <div className="row d-flex justify-content-center" style={{ fontSize: "14px" }}>
+                  <div className="col-sm-12 justify-content-center d-flex" style={{ outline: "0px solid red" }}>
+                    <a href="/google-api-user-data-policy" style={{ color: "#5F676D" }} target="_blank">Google API Services User Data Policy</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
