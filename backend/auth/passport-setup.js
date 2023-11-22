@@ -44,8 +44,9 @@ passport.use(
                     accessToken: accessToken,
                     refreshToken: refreshToken,
                     isOnboarded: false,
+                    thirdPartyConsent: false,
                 }).then((createdUser) => {
-                    // console.log('\nnew user created: ' + createdUser + '\n') (Development only) 
+                    console.log('\nnew user created: ' + createdUser + '\n') //(Development only) 
                     done(null, createdUser)
                 })
 
