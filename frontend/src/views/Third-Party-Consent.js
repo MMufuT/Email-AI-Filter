@@ -12,7 +12,6 @@ const ThirdPartyConsent = () => {
 
     useEffect(() => {
         document.title = "Third Party Consent | Email AI Filter"
-        console.log('third party consent page entered')
         getConsentStatus(navigate)
     })
 

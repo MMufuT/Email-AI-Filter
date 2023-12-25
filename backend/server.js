@@ -44,10 +44,10 @@ app.use((req, res, next) => {
 
 
 //middleware logger (Development only)
-app.use((req, res, next) => {
-    console.log(req.originalUrl, req.method);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log(req.originalUrl, req.method);
+//     next();
+// });
 
 //setting up routes
 const historyRoutes = require('./routes/history-api')
@@ -61,8 +61,8 @@ apiRouter.use('/onboarding', onboardingRoutes)
 apiRouter.use('/account', accountRouter)
 apiRouter.use('/auth', authRoutes)
 
-//app.use('/api', apiRouter)
-app.use('/', apiRouter) //- Dev
+app.use('/api', apiRouter)
+//app.use('/', apiRouter) //- Dev
 
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)

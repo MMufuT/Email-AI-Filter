@@ -21,7 +21,6 @@ export const noConsentDeleteAccount = (async (navigate) => {
 GET /onboarding/third-party-consent API call. Used to check if user has given consent to use third-party API tools
 */
 export const getConsentStatus = (async (navigate) => {
-    console.log('get consent status entered')
     axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/third-party-consent`, { withCredentials: true })
         .then((response) => {
             console.log(`Consent has already been given to Email AI Filter to use Third Party Tools.`)
@@ -29,7 +28,6 @@ export const getConsentStatus = (async (navigate) => {
             navigate('/onboarding/form')
         })
         .catch((error) => {
-            console.log('bad shit')
             if (error.response && error.response.status === 401) {
                 window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
             }
