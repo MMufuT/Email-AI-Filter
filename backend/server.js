@@ -61,7 +61,7 @@ apiRouter.use('/onboarding', onboardingRoutes)
 apiRouter.use('/account', accountRouter)
 apiRouter.use('/auth', authRoutes)
 
-app.use('/api', apiRouter)
+app.use(process.env.API_ROOT, apiRouter)
 //app.use('/', apiRouter) //- Dev
 
 //connect to DB
