@@ -29,6 +29,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:dev": "REACT_APP_SERVER_URL=http://localhost:8000 REACT_APP_CLIENT_URL=http://localhost:3000 react-scripts start",
+    "pushProd": "react-scripts build && scp -r ./build/* root@167.71.90.155:/usr/share/nginx/html",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

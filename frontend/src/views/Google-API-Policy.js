@@ -23,12 +23,15 @@ const GoogleAPIPolicy = () => {
                 securely processed and stored in a MongoDB database. We take stringent measures to ensure
                 the security and integrity of our database, so no third-party access is permitted beyond
                 what is necessary for the app's functionality. Our storage solution is designed to maintain
-                the confidentiality and resilience of your personal data.
+                the confidentiality and resilience of your personal data. In accordance with Google's policies,
+                our use and transfer of information received from Google APIs will adhere to the&nbsp;
+                <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API
+                Services User Data Policy</a>, including its Limited Use requirements.
             </p>
 
             <h2>AI Models</h2>
             <p>
-                Third-party AI tools (<a href="https://openai.com/blog/introducing-text-and-code-embeddings" target="blank">OpenAI API</a> and <a href="https://qdrant.tech/documentation/concepts/search/" target="blank">Qdrant Vector Database</a>) are employed to serialize your emails into vectors, allowing for an
+                Third-party AI tools (<a href="https://openai.com/blog/introducing-text-and-code-embeddings" target="_blank">OpenAI API</a> and <a href="https://qdrant.tech/documentation/concepts/search/" target="_blank">Qdrant Vector Database</a>) are employed to serialize your emails into vectors, allowing for an
                 advanced search using cosine similarity. These tools are <strong>essential</strong> to the app's core
                 capabilities.
             </p>
@@ -51,7 +54,7 @@ const GoogleAPIPolicy = () => {
             <h2>Further Questions</h2>
             <p>
                 If you have any concerns or queries about how your data is used, please email us at&nbsp;
-                <a href="mailto:mmt108@case.edu" target="blank">mmt108@case.edu</a>.
+                <a href="mailto:mmt108@case.edu" target="_blank">mmt108@case.edu</a>.
                 We are here to ensure that your experience with Gmail AI Filter is secure, private, and
                 transparent.
             </p>

@@ -36,7 +36,7 @@ const ThirdPartyConsent = () => {
                                 <li>We assure you that data sharing is solely for app functionality.</li>
                                 <li>Without consent, the app's services will be <strong>unavailable</strong>.</li>
                                 <li>You may withdraw consent and delete your account anytime <strong>at your account page</strong>.</li>
-                                <li>To view how we use your Gmail data in more detail, view our <a href='/google-api-user-data-policy' target='blank'>Google API Policy</a>.</li>
+                                <li>To view how we use your Gmail data in more detail, view our <a href='/google-api-user-data-policy' target='_blank'>Google API Policy</a>.</li>
                             </ul>
                             <hr />
                             {/* two buttons within a row. the left button will say "I do not consent" and the right button will say "I do consent"*/}
