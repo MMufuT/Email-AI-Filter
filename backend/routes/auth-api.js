@@ -16,7 +16,7 @@ auth_router.get('/logout', (req, res) => {
         req.logout()
         res.status(200).send('Logout was successful')
     } catch(e) {
-        console.error('[GET /auth/logout] Seomthing went wrong with the logout')
+        console.error('Somthing went wrong with the logout')
         res.status(500).send('Something went wrong with the logout')
     }
 })
@@ -43,7 +43,7 @@ auth_router.get('/google/redirect', passport.authenticate('google'),  (req, res)
             res.redirect(`${process.env.FRONTEND_URL}/search`)
         }
     } catch (e) {
-        console.error('[GET /auth/google/redirect] Someting went wrong with the google oauth -> web app redirect:', e)
+        console.error('Someting went wrong with the google oauth -> web app redirect')
         res.status(500).send('User could not be redirected from google oauth login')
     }
 })

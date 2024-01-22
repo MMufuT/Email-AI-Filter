@@ -15,7 +15,7 @@ historyRouter.get('/', (req, res) => {
         res.status(200).json({ searchHistory: history })
     })
     .catch((e) => {
-        console.error('[GET /history/] Error occurred while getting all of user history:', e)
+        console.error('Error occurred while getting all of user history')
         res.status(500).send('Something went wrong with history retrieval')
     })
 })
@@ -28,7 +28,7 @@ historyRouter.get('/:id', async (req, res) => {
         res.status(200).json({ searchHistory: history })
     })
     .catch((e) => {
-        console.error('[GET /history/:id] Error occurred while getting a history object:', e)
+        console.error('Error occurred while getting a history objec')
         res.status(500).send('Something went wrong with the history retrieval')
     })
 
@@ -43,7 +43,7 @@ historyRouter.delete('/', (req, res) => {
         res.status(200).json({ mssg: `Number of history objects deleted: ${deleteResult.deletedCount}` })
     })
     .catch((e) => {
-        console.error('[DELETE /history/] Error occurred while deleting all of user search history:', e)
+        console.error('Error occurred while deleting all of user search history')
         res.status(500).send('Something went wrong while trying to delete history')
     })
 })
@@ -54,7 +54,7 @@ historyRouter.delete('/:id', (req, res) => {
         res.status(200).json({ mssg: `History ${req.params} has been deleted` })
     })
     .catch((e) => {
-        console.error('[DELETE /history/:id] Error occurred while deleting a history object:', e)
+        console.error('Error occurred while deleting a history object')
         res.status(500).send('Something went wrong while trying to delete history')
     })
 })

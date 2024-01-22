@@ -12,6 +12,7 @@ import '../styles/search-results.css'
 import CustomNavbar from '../components/Custom-Navbar'
 import postSearch from '../functions/post-search'
 import FilterModal from '../components/Filter-Modal'
+const clientUrl = process.env.REACT_APP_CLIENT_URL
 
 
 const SearchResults = () => {
@@ -75,7 +76,7 @@ const SearchResults = () => {
       <div className="row justify-content-start search-bg" >
 
         <div className="col-md-6 mt-4 ms-3 d-flex align-items-center">
-          <a href={`${process.env.REACT_APP_CLIENT_URL}/search`}>
+          <a href={`${clientUrl}/search`}>
             <img src={aiLogo} alt="Logo" className="results-logo-image me-3" />
           </a>
           <div className="input-group" style={{ outline: "0px solid red" }} >

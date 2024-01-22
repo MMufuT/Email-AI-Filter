@@ -24,7 +24,7 @@ const getGmailApiClient = async (oAuth2Client, user) => {
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
     return gmail
   } catch (error) {
-    console.error("Error occured while getting Gmail API Client: " + error)
+    console.error('Error occured while getting Gmail API Client')
   }
 }
 
@@ -45,7 +45,7 @@ const getOnboardingMail = (gmail, filter) => {
       },
       (err, response) => {
         if (err) {
-          console.error('Error retrieving latest email:', err)
+          console.error('Error retrieving latest email')
           reject(err)
           return
         }
@@ -65,7 +65,7 @@ const getOnboardingMail = (gmail, filter) => {
               },
               async (err, response) => {
                 if (err) {
-                  console.error('Error retrieving email:', err)
+                  console.error('Error retrieving email')
                   reject(err)
                   return
                 }
@@ -168,7 +168,7 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
 
         resolve(email)
       } catch (error) {
-        console.error('Error retrieving email:', error)
+        console.error('Error retrieving email')
         reject(error)
       }
     })
@@ -219,7 +219,7 @@ const loadMailToDB = async (gmail, filter, userId, emailAddress, pageToken = nul
         //   emails.push(email)
         // })
       } catch (error) {
-        console.error('Error while fetching 250 Emails: ' + error)
+        console.error('Error while fetching 250 Emails')
         reject(error)
         return
       }

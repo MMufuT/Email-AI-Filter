@@ -1,10 +1,12 @@
 import axios from 'axios'
+const oAuthLoginUrl = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 /*
 PATCH /PATCH API call. Used to update user's gmailLinkId
 */
 const patchAccount = (async (account, setAccount, tempGmailLinkId, navigate) => {
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/account/update`, {gmailLinkId: tempGmailLinkId}, { withCredentials: true })
+    await axios.patch(`${serverUrl}/account/update`, {gmailLinkId: tempGmailLinkId}, { withCredentials: true })
         .then((response) => {
             setAccount({
                 ...account,
@@ -25,7 +27,7 @@ const patchAccount = (async (account, setAccount, tempGmailLinkId, navigate) => 
                 }
             }
             else if (error.response && error.response.status === 401) {
-                window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+                window.location.href = oAuthLoginUrl
             }
         })
 })

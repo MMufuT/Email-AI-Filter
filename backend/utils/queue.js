@@ -71,7 +71,7 @@ onboardingQueue.process('onboarding', async (job, done) => {
         waitForEmptyLimiter(onboardingRateLimiter, done)
     } catch (error) {
         // Job failed, pass the error to done callback
-        console.error('Error during Bull Queue onboarding process:', error)
+        console.error('Error during Bull Queue onboarding process')
         done(error)
     }
 })

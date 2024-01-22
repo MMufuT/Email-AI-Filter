@@ -16,7 +16,7 @@ accountRouter.get('/', (req, res) => {
         const accountInfo = { picture, emailAddress, gmailLinkId, inboxFilter, oldestEmail }
         res.status(200).json({ accountInfo: accountInfo })
     } catch (e) {
-        console.error('[GET /account/] An error occurred while getting account info:', e)
+        console.error('An error occurred while getting account info')
         res.status(500).send('Something went wrong while retreiving account info')
     }
 })
@@ -41,7 +41,7 @@ accountRouter.patch('/update', async (req, res) => {
         })
 
     } catch (e) {
-        console.error('[PATCH /account/update] Error occurred while updating account information:', e)
+        console.error('Error occurred while updating account information')
         res.status(500).send('Something went wrong while updating account information')
     }
 })
@@ -58,7 +58,7 @@ accountRouter.delete('/delete', async (req, res) => {
         }
         res.status(200).send(`User ${emailAddress} deleted successfully`)
     } catch (e) {
-            console.error('[DELETE /account/delete] Error occurred while deleting user:', e)
+            console.error('Error occurred while deleting user')
             res.status(500).send('Something went wrong while deleting user')
     }
 })

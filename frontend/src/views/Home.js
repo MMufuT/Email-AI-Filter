@@ -23,6 +23,7 @@ import account from '../images/account.png'
 import history from '../images/history.png'
 import onboardingDiagram from '../images/onboarding-diagram.png'
 import searchDiagram from '../images/search-diagram.png'
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 
 const Home = () => {
@@ -93,7 +94,7 @@ const Home = () => {
                 </div>
                 <div className="row d-flex justify-content-center">
                   <div className="col-sm-8 justify-content-center d-flex" style={{ outline: "0px solid red" }}>
-                    <a href={`${process.env.REACT_APP_SERVER_URL}/auth/google`}>
+                    <a href={`${serverUrl}/auth/google`}>
                       <img src={googleSignInButton} style={{ height: "50px", width: "auto" }} />
                     </a>
                   </div>

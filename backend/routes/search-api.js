@@ -58,7 +58,7 @@ searchRouter.post('/', onboardingCheck, async (req, res) => {
 
         res.json({ email: emailAddress, searchConfig: searchConfig, results: searchResults })
     } catch (e) {
-        console.error('[POST /search/] Error occcured while searching for emails:', e)
+        console.error('Error occcured while searching for emails')
         res.status(500).send('Something went wrong while searching for emails')
     }
 })

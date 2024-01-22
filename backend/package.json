@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "FRONTEND_URL=http://localhost:3000 BACKEND_URL=http://localhost:8000 API_ROOT=/ nodemon server.js node --inspect=localhost:8000 --trace-warnings"
+    "dev": "FRONTEND_URL=http://localhost:3000 BACKEND_URL=http://localhost:8000 API_ROOT=/ nodemon server.js node --inspect=localhost:8000 --trace-warnings",
+    "deploy": "scp -r ../backend ../docker-compose.yml root@167.71.90.155:/root/"
   },
   "keywords": [],
   "author": "",

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader'
 import axios from 'axios'
 import '../styles/onboarding.css'
+const oAuthLoginUrl = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 const OnboardingLoading = () => {
 
@@ -13,7 +15,7 @@ const OnboardingLoading = () => {
     useEffect(() => {
         document.title = "Loading Database | Email AI Filter"
         const checkStatus = (async () => {
-            await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/login-status`, { withCredentials: true })
+            await axios.get(`${serverUrl}/auth/login-status`, { withCredentials: true })
                 .then((response) => {
                     // console.log('User is authorized') (Development only)
                     // If user is authorized (logged in), no action needed
@@ -24,14 +26,14 @@ const OnboardingLoading = () => {
 
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
                         if (errorMessage === "User is not logged in") {
-                            window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+                            window.location.href = oAuthLoginUrl
                         } else { /*do nothing*/ }
                     }
                 })
 
             setLoading(true)
 
-            axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/loading`, {}, { withCredentials: true })
+            axios.post(`${serverUrl}/onboarding/loading`, {}, { withCredentials: true })
                 .then(response => {
                     //if user has filled out the form and isn't onboared yet, continue onboarding
                     setLoading(false)

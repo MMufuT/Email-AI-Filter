@@ -20,7 +20,7 @@ onboardingRouter.delete('/no-consent-delete-account', async (req, res) => {
         await User.findByIdAndDelete(userId)
         res.status(200).send(`User ${emailAddress} deleted successfully`)
     } catch (e) {
-        console.error('[DELETE /onboarding/no-consent-delete-account] Error deleting account:', e)
+        console.error('Error deleting account')
         res.status(500).send('Something went wrong while deleting account')
     }
 })
@@ -33,7 +33,7 @@ onboardingRouter.post('/third-party-consent', async (req, res) => {
         await User.findByIdAndUpdate(userId, { thirdPartyConsent: true })
         res.status(200).send('Third party consent was successfully updated')
     } catch (e) {
-        console.error('[POST /onboarding/third-party-consent] Error updating third party consent:', e)
+        console.error('Error updating third party consent')
         res.status(500).send('Something went wrong while updating third party consent')
     }
 })
@@ -44,7 +44,7 @@ onboardingRouter.get('/third-party-consent', async (req, res) => {
         else return res.status(403).send('You must consent to third-party API usage to access Email AI Filter.')
 
     } catch (e) {
-        console.error('[GET /onboarding/third-party-consent] Error getting third party consent:', e)
+        console.error('Error getting third party consent')
         res.status(500).send('Something went wrong while getting third party consent')
     }
 })
@@ -75,7 +75,7 @@ onboardingRouter.post('/loading', async (req, res) => {
                     sortedEmails = await newToOldMailSort(emails) //emails sorted (latest -> oldest)
                 }).catch(error => {
                     onboardingQueue.resume()
-                    console.error('Error occured while queue was paused:', error)
+                    console.error('Error occured while queue was paused')
                 })
 
             // un-pause redis queue b/c we're done using gmail api
@@ -129,7 +129,7 @@ onboardingRouter.post('/loading', async (req, res) => {
         }
 
     } catch (e) {
-        console.error('[POST /onboarding/loading] Error during onboarding:', e)
+        console.error('Error during onboarding')
         res.status(500).json('Something went wrong with the onboarding process. Try again later')
     }
 })
@@ -153,7 +153,7 @@ onboardingRouter.post('/form', async (req, res) => {
         // console.log('User updated with gmail link id:', gmailLinkId) (Development Only)
         res.status(200).json({ message: 'Filter preferences updated successfully' })
     } catch (e) {
-        console.error('[POST /onboarding/form] Error updating filter preferences or gmail link id:', e)
+        console.error('Error updating filter preferences or gmail link id')
         res.status(500).send('Something went wrong while submitting form')
     }
 
@@ -183,7 +183,7 @@ onboardingRouter.patch('/reset', async (req, res) => {
             res.status(200).send('Onboarding process was successfully reset')
         }
     } catch (e) {
-        console.error('[PATCH /onboarding/reset] Error resetting onboarding status:', e)
+        console.error('Error resetting onboarding status')
         res.status(500).send('Something went wrong while resetting onboarding status')
     }
 })

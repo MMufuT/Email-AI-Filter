@@ -67,13 +67,14 @@ app.use(process.env.API_ROOT, apiRouter)
 //connect to DB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        //listen for requests
+        //listen for requests (temporary disabled for the sake of CASA)
+        
         app.listen(process.env.PORT, () => {
-            console.log('connected to MongoDB and listening on port', process.env.PORT, 'yuhhh')
+            console.log('connected to MongoDB')
         })
 
     })
     .catch((error) => {
-        console.log(error)
+        console.log("error connecting to MongoDB")
     })
 

@@ -1,5 +1,7 @@
 import axios from 'axios'
 import convertStringToUnixTimestamp from './string-to-unix'
+const oAuthLoginUrl = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 /*
 POST /search API call. Used to search and return matching emails from qdrant for matching emails
@@ -18,7 +20,7 @@ const postSearch = (async (navigate, location, setResults, setSearchConfig) => {
         }
     }
 
-    axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, searchConfig, { withCredentials: true })
+    axios.post(`${serverUrl}/search`, searchConfig, { withCredentials: true })
         .then((response) => {
             setResults(response.data.results)
             setSearchConfig(response.data.searchConfig)
@@ -32,7 +34,7 @@ const postSearch = (async (navigate, location, setResults, setSearchConfig) => {
                 }
             }
             else if (error.response && error.response.status === 401) {
-                window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+                window.location.href = oAuthLoginUrl
             }
         })
 })

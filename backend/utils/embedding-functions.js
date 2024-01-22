@@ -26,7 +26,7 @@ const createEmbedding = async (input) => {
   })
     .then((response) => { return response.data.data[0].embedding })
     .catch((error) => {
-      console.error('Error occured while creating Open AI embedding:', error)
+      console.error('Error occured while creating Open AI embedding')
     })
 }
 
@@ -49,7 +49,7 @@ const addEmailtoQdrant = async (emailAddress, sender, subject, body, gmailId, un
     }]
   })
     .catch((error) => {
-      console.error('Error occured while uploading vector to Qdrant database (Log error for more info):')
+      console.error('Error occured while uploading vector to Qdrant database')
     })
 }
 
@@ -63,14 +63,14 @@ const createQdrantCollection = async (emailAddress) => {
     on_disk_payload: true
   })
     .catch((error) => {
-      console.error('Error occurred during Qdrant collection creation:', error)
+      console.error('Error occurred during Qdrant collection creation')
     })
 }
 
 const deleteQdrantCollection = async (emailAddress) => {
   await qdrant.deleteCollection(emailAddress)
     .catch((error) => {
-      console.error('Error occurred during Qdrant collection deletion:', error)
+      console.error('Error occurred during Qdrant collection deletion')
       return false
     })
   return true
@@ -118,7 +118,7 @@ const getSearchResults = async (userEmail, query, senderEmailAddress, range) => 
     }
   })
     .catch((error) => {
-      console.error('Error occurred during Qdrant vector search:', error)
+      console.error('Error occurred during Qdrant vector search')
     })
 
   return results

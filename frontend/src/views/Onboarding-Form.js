@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/onboarding.css'
 import categoryExample from '../images/categoryExample.jpg'
 import UserIdExample from '../images/UserID Example.jpg'
+const oAuthLoginUrl = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 const OnboardingForm = () => {
     const navigate = useNavigate()
@@ -42,13 +44,13 @@ const OnboardingForm = () => {
         // The finishedForm object will contain the formData
         const finishedForm = formData
         // console.log(finishedForm) (Development Only)
-        axios.post(`${process.env.REACT_APP_SERVER_URL}/onboarding/form`, finishedForm, { withCredentials: true })
+        axios.post(`${serverUrl}/onboarding/form`, finishedForm, { withCredentials: true })
             .then((response) => {
                 console.log('Form details have been successfully uploaded')
                 navigate('/onboarding/loading')
             })
             .catch((error) => {
-                console.log(error)
+                console.log('Something went wrong submitting the form details')
             })
 
     }
@@ -57,7 +59,7 @@ const OnboardingForm = () => {
     useEffect(() => {
         document.title = "Onboarding Form | Email AI Filter"
         const checkStatus = (async () => {
-            await axios.get(`${process.env.REACT_APP_SERVER_URL}/onboarding/onboarded-status`, { withCredentials: true })
+            await axios.get(`${serverUrl}/onboarding/onboarded-status`, { withCredentials: true })
                 .then((response) => {
                     // If user is authorized (logged in and onboarded), redirect to search
                     navigate('/search')
@@ -69,7 +71,7 @@ const OnboardingForm = () => {
                         navigate('/onboarding/form')
                     } else {
                         // If user is unauthorized (not logged in), redirect to Google OAuth login
-                        window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+                        window.location.href = oAuthLoginUrl
                     }
                 })
         })

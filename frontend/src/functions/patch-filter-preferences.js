@@ -1,14 +1,18 @@
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+const oAuthLoginUrl = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
 /*
 PATCH /reset API call. Used to reset onboarding process by:
     1. Setting user's onboarded status to false
     2. Redirecting user to /onboarding/form
 */
+
+//(temporary disabled for the sake of CASA)
 const patchFilterPreferences = (async (navigate) => {
-    await axios(`${process.env.REACT_APP_SERVER_URL}/onboarding/reset`, {
+    await axios(`${serverUrl}/onboarding/reset`, {
         method: "patch",
         withCredentials: true
     })
@@ -27,7 +31,7 @@ const patchFilterPreferences = (async (navigate) => {
                 toast.error("Your database is currently being loaded. Please try again in a few minutes.");
             }
             else if (error.response.status === 401) {
-                window.location.href = process.env.REACT_APP_GOOGLE_OAUTH_LOGIN_URL;
+                window.location.href = oAuthLoginUrl
             }
         })
 })
