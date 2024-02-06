@@ -146,7 +146,7 @@ const Home = () => {
                 <h1 className="patrick-font text-center" style={{ color: "black", fontSize: "300%" }}>How It Works</h1>
               </div>
               <div className="mb-5">
-                <a className="justify-content-center d-flex text-black-underline" href="https://bit.ly/49dyQgL" target="_blank">
+                <a className="justify-content-center d-flex text-black-underline" href="https://medium.com/@mtebit/email-ai-filter-my-journey-towards-building-my-first-javascript-web-app-044807d344f0" target="_blank">
                   <h3 className="patrick-font text-center" style={{ color: "black", fontSize: "300%" }}>Read More About Email AI Filter Here!</h3>
                 </a>
               </div>
